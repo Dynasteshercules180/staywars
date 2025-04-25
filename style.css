@@ -1,4 +1,4 @@
-/* StayWars – Stil für modernes Unterkunftsportal */
+/* StayWars – Stil für bildschirmfüllendes Logo + modernes Layout */
 
 body {
   font-family: "Segoe UI", sans-serif;
@@ -8,25 +8,20 @@ body {
   color: #333;
 }
 
-header {
-  background-color: #111;
-  color: #fff;
-  padding: 20px;
-  display: flex;
-  align-items: center;
-  gap: 20px;
+header.full-logo {
+  width: 100%;
+  height: auto;
+  overflow: hidden;
 }
 
-header h1 {
-  font-size: 1.8em;
-  margin: 0;
+.logo-full {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
 }
 
-.logo {
-  height: 60px;
-  border-radius: 12px;
-}
-
+/* Allgemeine Sektionen */
 section {
   margin: 30px auto;
   max-width: 800px;
