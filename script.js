@@ -223,6 +223,32 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  document.addEventListener('click', function(e) {
+  // Wenn auf großes Hover-Bild geklickt wird
+  if (e.target.id === 'hoverImage' || (e.target.parentElement && e.target.parentElement.id === 'hoverImage')) {
+    const src = e.target.tagName === 'IMG' ? e.target.src : e.target.querySelector('img').src;
+    
+    // Suche die Unterkunft und Bildindex basierend auf dem src
+    for (let accId in imagesByAccommodation) {
+      const index = imagesByAccommodation[accId].indexOf(src);
+      if (index !== -1) {
+        removeHoverImage(); // Erst Hover-Bild schließen
+        openGallery(accId, index); // Dann Galerie öffnen
+        break;
+      }
+    }
+    return;
+  }
+
+  // Normales Klickverhalten bei kleinen Bildern
+  if (e.target.tagName === 'IMG' && e.target.closest('#accommodations')) {
+    const accId = e.target.dataset.accid;
+    const index = parseInt(e.target.dataset.index);
+    openGallery(accId, index);
+  }
+});
+
+
   // Hover auf Bild = Groß anzeigen
  document.addEventListener('mouseover', function(e) {
   if (e.target.tagName === 'IMG' && e.target.closest('#accommodations') && !document.getElementById('hoverImage')) {
