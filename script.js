@@ -1,5 +1,5 @@
 // StayWars - script.js
-// Features: Login, Unterkunft erstellen/bearbeiten, Bild-Upload (bis 4 Bilder), Sternebewertung, Erfolgsmeldung
+// Features: Login, Unterkunft erstellen/bearbeiten, Bild-Upload, Sternebewertung, Erfolgsmeldung
 
 window.addEventListener("DOMContentLoaded", () => {
   const supabase = window.supabase.createClient(
@@ -117,12 +117,8 @@ window.addEventListener("DOMContentLoaded", () => {
         <p><strong>Vorteile:</strong> ${acc.pros}</p>
         <p><strong>Nachteile:</strong> ${acc.cons}</p>
         <button onclick="editAccommodation('${acc.id}')">Bearbeiten</button>
-        <div class="rating">
-          <span onclick="submitRating('${acc.id}', 1)">⭐</span>
-          <span onclick="submitRating('${acc.id}', 2)">⭐⭐</span>
-          <span onclick="submitRating('${acc.id}', 3)">⭐⭐⭐</span>
-          <span onclick="submitRating('${acc.id}', 4)">⭐⭐⭐⭐</span>
-          <span onclick="submitRating('${acc.id}', 5)">⭐⭐⭐⭐⭐</span>
+        <div class="rating" data-id="${acc.id}">
+          ${[1,2,3,4,5].map(n => `<span data-value="${n}" class="star">★</span>`).join('')}
         </div>
       `;
       container.appendChild(div);
@@ -175,6 +171,32 @@ window.addEventListener("DOMContentLoaded", () => {
       msg.remove();
     }, 3000);
   }
+
+  // ✨ Neues Event-Handling für Sterne Hover und Klick
+  document.addEventListener('mouseover', function(e) {
+    if (e.target.classList.contains('star')) {
+      const stars = Array.from(e.target.parentElement.querySelectorAll('.star'));
+      const hoverIndex = stars.indexOf(e.target);
+      stars.forEach((star, idx) => {
+        star.style.color = idx <= hoverIndex ? 'gold' : 'gray';
+      });
+    }
+  });
+
+  document.addEventListener('mouseout', function(e) {
+    if (e.target.classList.contains('star')) {
+      const stars = Array.from(e.target.parentElement.querySelectorAll('.star'));
+      stars.forEach(star => star.style.color = 'gray');
+    }
+  });
+
+  document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('star')) {
+      const accommodationId = e.target.parentElement.dataset.id;
+      const rating = e.target.dataset.value;
+      submitRating(accommodationId, rating);
+    }
+  });
 
   loadAccommodations();
 });
