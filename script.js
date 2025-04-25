@@ -1,5 +1,5 @@
 // StayWars - script.js
-// Features: Login, Unterkunft erstellen/bearbeiten, Bild-Upload (bis 4 Bilder), Bewertungen, Erfolgsmeldung
+// Features: Login, Unterkunft erstellen/bearbeiten, Bild-Upload (bis 4 Bilder), Sternebewertung, Erfolgsmeldung
 
 window.addEventListener("DOMContentLoaded", () => {
   const supabase = window.supabase.createClient(
@@ -118,9 +118,11 @@ window.addEventListener("DOMContentLoaded", () => {
         <p><strong>Nachteile:</strong> ${acc.cons}</p>
         <button onclick="editAccommodation('${acc.id}')">Bearbeiten</button>
         <div class="rating">
-          <label>Bewertung (1–10):</label>
-          <input type="number" min="1" max="10" id="rate-${acc.id}">
-          <button onclick="submitRating('${acc.id}')">Abschicken</button>
+          <span onclick="submitRating('${acc.id}', 1)">⭐</span>
+          <span onclick="submitRating('${acc.id}', 2)">⭐⭐</span>
+          <span onclick="submitRating('${acc.id}', 3)">⭐⭐⭐</span>
+          <span onclick="submitRating('${acc.id}', 4)">⭐⭐⭐⭐</span>
+          <span onclick="submitRating('${acc.id}', 5)">⭐⭐⭐⭐⭐</span>
         </div>
       `;
       container.appendChild(div);
@@ -144,10 +146,8 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  window.submitRating = async function (accommodation_id) {
-    const input = document.getElementById(`rate-${accommodation_id}`);
-    const rating = parseInt(input.value);
-    if (rating < 1 || rating > 10) return alert("Nur 1–10 erlaubt!");
+  window.submitRating = async function (accommodation_id, rating) {
+    if (rating < 1 || rating > 5) return alert("Nur 1–5 Sterne erlaubt!");
 
     const { error } = await supabase.from("reviews").insert([{ accommodation_id, rating }]);
     if (error) {
