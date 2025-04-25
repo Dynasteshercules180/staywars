@@ -13,6 +13,13 @@ header.full-logo {
   width: 100%;
   overflow: hidden;
 }
+
+.logo-full {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+}
 /* Hero-Bereich mit großem Logo */
 header.hero {
   width: 100%;
@@ -27,13 +34,6 @@ header.hero {
   object-fit: cover;
 }
 
-
-.logo-full {
-  width: 100%;
-  height: auto;
-  display: block;
-  object-fit: cover;
-}
 
 /* Allgemeine Sektionen */
 section {
