@@ -45,40 +45,46 @@ window.addEventListener("DOMContentLoaded", () => {
     let newId = id;
     let response;
 
-    
     if (id) {
+      response = await supabase.from("accommodations").update(data).eq("id", id);
+    } else {
       response = await supabase.from("accommodations").insert([data]).select();
-
       if (response.error || !response.data || response.data.length === 0) {
         alert("Fehler beim Speichern!");
         console.error(response.error || "Keine Daten zurückgegeben.");
         return;
       }
-
       newId = response.data[0].id;
-
     }
 
     const files = document.getElementById("images").files;
     if (files.length > 0) {
       for (let i = 0; i < Math.min(files.length, 4); i++) {
         const file = files[i];
+        if (!file || !file.name || file.size === 0) continue; // Skip leere Uploads
+
         const filePath = `${newId}/${Date.now()}-${file.name}`;
 
         const { error: uploadError } = await supabase.storage
           .from("accommodation-images")
-          .upload(filePath, file);
-
-        if (!uploadError) {
-          const publicUrl = supabase.storage
-            .from("accommodation-images")
-            .getPublicUrl(filePath).data.publicUrl;
-
-          await supabase.from("accommodation_images").insert({
-            accommodation_id: newId,
-            image_url: publicUrl
+          .upload(filePath, file, {
+            cacheControl: '3600',
+            upsert: false
           });
+
+        if (uploadError) {
+          console.error("Upload-Fehler:", uploadError);
+          continue;
         }
+
+        const publicUrl = supabase.storage
+          .from("accommodation-images")
+          .getPublicUrl(filePath).data.publicUrl;
+
+        await supabase.from("accommodation_images").insert({
+          accommodation_id: newId,
+          image_url: publicUrl
+        });
       }
     }
 
