@@ -20,20 +20,6 @@ header.full-logo {
   display: block;
   object-fit: cover;
 }
-/* Hero-Bereich mit großem Logo */
-header.hero {
-  width: 100%;
-  height: auto;
-  overflow: hidden;
-}
-
-.hero-image {
-  width: 100%;
-  height: auto;
-  display: block;
-  object-fit: cover;
-}
-
 
 /* Allgemeine Sektionen */
 section {
