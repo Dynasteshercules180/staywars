@@ -1,8 +1,7 @@
 // StayWars - script.js
-// Features: Login, Unterkunft erstellen/bearbeiten, Bild-Upload (bis 4 Bilder), Bewertungen
+// Features: Login, Unterkunft erstellen/bearbeiten, Bild-Upload (bis 4 Bilder), Bewertungen, Erfolgsmeldung
 
 window.addEventListener("DOMContentLoaded", () => {
-  // Supabase initialisieren
   const supabase = window.supabase.createClient(
     "https://bzoavgxcbnwphooqqvdm.supabase.co",
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ6b2F2Z3hjYm53cGhvb3FxdmRtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU1Njg2NTIsImV4cCI6MjA2MTE0NDY1Mn0.1u53rNL4AVmVsrehvwtVBOe-JzH5_YXTeOLlFTTWIDE"
@@ -13,7 +12,6 @@ window.addEventListener("DOMContentLoaded", () => {
     "tester": "nacht123"
   };
 
-  // Login-Funktion
   window.login = function () {
     const user = document.getElementById("login-username").value;
     const pass = document.getElementById("login-password").value;
@@ -28,7 +26,6 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  // Formular absenden
   document.getElementById("accommodation-form").addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -58,9 +55,8 @@ window.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    const newId = id || response.data[0].id;
+    const newId = id ? id : response.data[0].id;
 
-    // Bild-Upload (maximal 4 Bilder)
     const files = document.getElementById("images").files;
     if (files.length > 0) {
       for (let i = 0; i < Math.min(files.length, 4); i++) {
@@ -84,13 +80,13 @@ window.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-    alert("Unterkunft gespeichert!");
+    showSuccessMessage("Unterkunft erfolgreich gespeichert!");
+
     document.getElementById("accommodation-form").reset();
     document.getElementById("accommodation-id").value = "";
     loadAccommodations();
   });
 
-  // Unterkünfte laden
   async function loadAccommodations() {
     const { data, error } = await supabase.from("accommodations").select("*").order("created_at", { ascending: false });
 
@@ -123,7 +119,6 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Unterkunft zum Bearbeiten laden
   window.editAccommodation = async function (id) {
     const { data } = await supabase.from("accommodations").select("*").eq("id", id).single();
     if (data) {
@@ -141,7 +136,6 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  // Bewertung speichern
   window.submitRating = async function (accommodation_id) {
     const input = document.getElementById(`rate-${accommodation_id}`);
     const rating = parseInt(input.value);
@@ -156,6 +150,23 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  // Beim Start laden
+  function showSuccessMessage(message) {
+    const msg = document.createElement("div");
+    msg.textContent = message;
+    msg.style.background = "#d4edda";
+    msg.style.color = "#155724";
+    msg.style.padding = "10px";
+    msg.style.margin = "10px 0";
+    msg.style.borderRadius = "6px";
+    msg.style.textAlign = "center";
+
+    const formSection = document.getElementById("form-section");
+    formSection.insertBefore(msg, formSection.firstChild);
+
+    setTimeout(() => {
+      msg.remove();
+    }, 3000);
+  }
+
   loadAccommodations();
 });
