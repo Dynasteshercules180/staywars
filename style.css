@@ -15,7 +15,7 @@ header.full-logo {
 }
 
 .logo-full {
-  width: 100%;
+  width: 100vw;
   height: auto;
   display: block;
   object-fit: cover;
