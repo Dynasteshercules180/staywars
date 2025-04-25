@@ -216,23 +216,22 @@ window.addEventListener("DOMContentLoaded", () => {
   });
 
   document.addEventListener('click', function(e) {
-    if (e.target.classList.contains('star')) {
-      const accommodationId = e.target.parentElement.dataset.id;
-      const rating = e.target.dataset.value;
-      submitRating(accommodationId, rating);
-    }
-  });
+  // 1. Bewertung (auf Stern geklickt)
+  if (e.target.classList.contains('star')) {
+    const accommodationId = e.target.parentElement.dataset.id;
+    const rating = e.target.dataset.value;
+    submitRating(accommodationId, rating);
+    return;
+  }
 
-  document.addEventListener('click', function(e) {
-  // Wenn auf großes Hover-Bild geklickt wird
+  // 2. Klick auf großes Hover-Bild → Galerie öffnen
   if (e.target.id === 'hoverImage' || (e.target.parentElement && e.target.parentElement.id === 'hoverImage')) {
     const src = e.target.tagName === 'IMG' ? e.target.src : e.target.querySelector('img').src;
-    
-    // Suche die Unterkunft und Bildindex basierend auf dem src
+
     for (let accId in imagesByAccommodation) {
       const index = imagesByAccommodation[accId].indexOf(src);
       if (index !== -1) {
-        removeHoverImage(); // Erst Hover-Bild schließen
+        removeHoverImage(); // Erst das große Hover-Bild entfernen
         openGallery(accId, index); // Dann Galerie öffnen
         break;
       }
@@ -240,14 +239,14 @@ window.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
-  // Normales Klickverhalten bei kleinen Bildern
+  // 3. Klick auf kleines Unterkunftsbild → Galerie öffnen
   if (e.target.tagName === 'IMG' && e.target.closest('#accommodations')) {
     const accId = e.target.dataset.accid;
     const index = parseInt(e.target.dataset.index);
     openGallery(accId, index);
+    return;
   }
 });
-
 
   // Hover auf Bild = Groß anzeigen
  document.addEventListener('mouseover', function(e) {
