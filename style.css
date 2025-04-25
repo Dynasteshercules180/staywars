@@ -1,4 +1,4 @@
-/* StayWars – Stil für bildschirmfüllendes Logo + modernes Layout */
+/* StayWars – modernes Design mit bildschirmfüllendem Logo */
 
 body {
   font-family: "Segoe UI", sans-serif;
@@ -8,9 +8,9 @@ body {
   color: #333;
 }
 
+/* Header + Logo */
 header.full-logo {
   width: 100%;
-  height: auto;
   overflow: hidden;
 }
 
@@ -21,7 +21,7 @@ header.full-logo {
   object-fit: cover;
 }
 
-/* Allgemeine Sektionen */
+/* Allgemeine Abschnitte */
 section {
   margin: 30px auto;
   max-width: 800px;
@@ -36,6 +36,7 @@ h2 {
   color: #222;
 }
 
+/* Formulareingaben */
 input[type="text"],
 input[type="number"],
 input[type="password"],
@@ -54,6 +55,7 @@ textarea {
   resize: vertical;
 }
 
+/* Buttons */
 button {
   background-color: #222;
   color: white;
@@ -69,11 +71,13 @@ button:hover {
   background-color: #444;
 }
 
+/* Bewertungsfeld */
 .rating input[type="number"] {
   width: 60px;
   margin-right: 10px;
 }
 
+/* Unterkunftsbilder */
 img {
   max-width: 100px;
   height: auto;
@@ -82,12 +86,14 @@ img {
   box-shadow: 0 1px 5px rgba(0,0,0,0.2);
 }
 
+/* Unterkunftskarten */
 #accommodations > div {
   margin-bottom: 30px;
   padding-bottom: 10px;
   border-bottom: 1px solid #ddd;
 }
 
+/* Links */
 a {
   color: #0077cc;
   text-decoration: none;
