@@ -224,49 +224,54 @@ window.addEventListener("DOMContentLoaded", () => {
   });
 
   // Hover auf Bild = Groß anzeigen
-  document.addEventListener('mouseover', function(e) {
-    if (e.target.tagName === 'IMG' && e.target.closest('#accommodations')) {
-      showHoverImage(e.target.src);
-    }
-  });
-
-  document.addEventListener('mouseout', function(e) {
-    if (e.target.tagName === 'IMG' && e.target.closest('#accommodations')) {
-      removeHoverImage();
-    }
-  });
-
-  function showHoverImage(src) {
-    const hoverImage = document.createElement('div');
-    hoverImage.id = 'hoverImage';
-    hoverImage.style.position = 'fixed';
-    hoverImage.style.top = '0';
-    hoverImage.style.left = '0';
-    hoverImage.style.width = '100vw';
-    hoverImage.style.height = '100vh';
-    hoverImage.style.background = 'rgba(0,0,0,0.8)';
-    hoverImage.style.display = 'flex';
-    hoverImage.style.alignItems = 'center';
-    hoverImage.style.justifyContent = 'center';
-    hoverImage.style.zIndex = '10000';
-
-    const img = document.createElement('img');
-    img.src = src;
-    img.style.maxWidth = '90%';
-    img.style.maxHeight = '90%';
-    img.style.borderRadius = '10px';
-    img.style.boxShadow = '0 0 20px white';
-
-    hoverImage.appendChild(img);
-    document.body.appendChild(hoverImage);
+ document.addEventListener('mouseover', function(e) {
+  if (e.target.tagName === 'IMG' && e.target.closest('#accommodations') && !document.getElementById('hoverImage')) {
+    showHoverImage(e.target.src);
   }
+});
 
-  function removeHoverImage() {
-    const hoverImage = document.getElementById('hoverImage');
-    if (hoverImage) {
-      hoverImage.remove();
-    }
+document.addEventListener('mousemove', function(e) {
+  const hoverImage = document.getElementById('hoverImage');
+  if (hoverImage && !e.target.closest('#accommodations') && e.target.id !== 'hoverImage') {
+    removeHoverImage();
   }
+});
+
+function showHoverImage(src) {
+  const hoverImage = document.createElement('div');
+  hoverImage.id = 'hoverImage';
+  hoverImage.style.position = 'fixed';
+  hoverImage.style.top = '0';
+  hoverImage.style.left = '0';
+  hoverImage.style.width = '100vw';
+  hoverImage.style.height = '100vh';
+  hoverImage.style.background = 'rgba(0,0,0,0.8)';
+  hoverImage.style.display = 'flex';
+  hoverImage.style.alignItems = 'center';
+  hoverImage.style.justifyContent = 'center';
+  hoverImage.style.zIndex = '10000';
+  hoverImage.style.cursor = 'pointer';
+
+  const img = document.createElement('img');
+  img.src = src;
+  img.style.maxWidth = '90%';
+  img.style.maxHeight = '90%';
+  img.style.borderRadius = '10px';
+  img.style.boxShadow = '0 0 20px white';
+
+  hoverImage.appendChild(img);
+  document.body.appendChild(hoverImage);
+
+  hoverImage.onclick = () => removeHoverImage();
+}
+
+function removeHoverImage() {
+  const hoverImage = document.getElementById('hoverImage');
+  if (hoverImage) {
+    hoverImage.remove();
+  }
+}
+
 
   loadAccommodations();
 });
