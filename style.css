@@ -1,4 +1,4 @@
-/* StayWars – Möge die Nacht S-tier sein! */
+/* StayWars – Stil für modernes Unterkunftsportal */
 
 body {
   font-family: "Segoe UI", sans-serif;
@@ -100,4 +100,14 @@ a {
 
 a:hover {
   text-decoration: underline;
+}
+
+/* Erfolgsmeldung */
+.success-message {
+  background: #d4edda;
+  color: #155724;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 6px;
+  text-align: center;
 }
