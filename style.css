@@ -144,3 +144,18 @@ a:hover {
   border-radius: 6px;
   text-align: center;
 }
+#accommodations img {
+  max-width: 100px;
+  height: auto;
+  margin: 6px;
+  border-radius: 8px;
+  box-shadow: 0 1px 5px rgba(0,0,0,0.2);
+  transition: transform 0.3s ease;
+  cursor: pointer;
+}
+
+#accommodations img:hover {
+  transform: scale(1.5);
+  z-index: 2;
+}
+
