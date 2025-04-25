@@ -291,4 +291,28 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 
   loadAccommodations();
+    loadAccommodations();
+
+  // Hover große Bildanzeige (Lightbox auf Hover)
+  document.addEventListener('mouseover', function(e) {
+    if (e.target.tagName === 'IMG' && e.target.closest('#accommodations')) {
+      showHoverImage(e.target.src);
+    }
+  });
+
+  document.addEventListener('mouseout', function(e) {
+    if (e.target.tagName === 'IMG' && e.target.closest('#accommodations')) {
+      removeHoverImage();
+    }
+  });
+
+  function showHoverImage(src) {
+    // (hier Code für Lightbox Hover)
+  }
+
+  function removeHoverImage() {
+    // (hier Code zum Entfernen)
+  }
+
 });
+
