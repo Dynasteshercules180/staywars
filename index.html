@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>StayWars – Möge die Nacht S-tier sein!</title>
+  <link rel="stylesheet" href="style.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script defer src="script.js"></script>
+</head>
+<body>
+  <header>
+    <img src="staywars-logo.png" alt="StayWars Logo" class="logo">
+    <h1>StayWars – Möge die Nacht S-tier sein!</h1>
+  </header>
+
+  <section id="auth">
+    <h2>Login</h2>
+    <input type="text" id="login-username" placeholder="Benutzername">
+    <input type="password" id="login-password" placeholder="Passwort">
+    <button onclick="login()">Login</button>
+    <p id="login-status"></p>
+  </section>
+
+  <section id="form-section" style="display:none;">
+    <h2>Neue Unterkunft eintragen</h2>
+    <form id="accommodation-form">
+      <input type="text" id="title" placeholder="Titel" required><br>
+      <textarea id="description" placeholder="Beschreibung"></textarea><br>
+      <input type="text" id="location" placeholder="Ort"><br>
+      <input type="number" id="price" placeholder="Preis pro Nacht"><br>
+      <textarea id="pros" placeholder="Was ist gut?"></textarea><br>
+      <textarea id="cons" placeholder="Was ist schlecht?"></textarea><br>
+      <input type="number" id="rooms" placeholder="Zimmeranzahl"><br>
+      <input type="number" id="bathrooms" placeholder="Badezimmeranzahl"><br>
+      <input type="text" id="link" placeholder="Link"><br>
+      <button type="submit">Speichern</button>
+    </form>
+  </section>
+
+  <section id="accommodation-list">
+    <h2>Unterkünfte</h2>
+    <div id="accommodations"></div>
+  </section>
+</body>
+</html>
