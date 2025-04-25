@@ -61,7 +61,7 @@ window.addEventListener("DOMContentLoaded", () => {
     if (files.length > 0) {
       for (let i = 0; i < Math.min(files.length, 4); i++) {
         const file = files[i];
-        if (!file || !file.name || file.size === 0) continue; // Skip leere Uploads
+        if (!file || !file.name || file.size === 0) continue;
 
         const filePath = `${newId}/${Date.now()}-${file.name}`;
 
