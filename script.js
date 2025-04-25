@@ -1,5 +1,5 @@
 // StayWars - script.js
-// Features: Login, Unterkunft erstellen/bearbeiten, Bild-Upload, Sternebewertung mit Username, Durchschnittsanzeige, Erfolgsmeldung
+// Features: Login, Unterkunft erstellen/bearbeiten, Bild-Upload, Sternebewertung mit Username, Durchschnittsanzeige, Lightbox-Galerie
 
 window.addEventListener("DOMContentLoaded", () => {
   const supabase = window.supabase.createClient(
@@ -11,6 +11,8 @@ window.addEventListener("DOMContentLoaded", () => {
     "admin": "staywars",
     "tester": "nacht123"
   };
+
+  let imagesByAccommodation = {}; // Speicherung der Bilder je Unterkunft
 
   window.login = function () {
     const user = document.getElementById("login-username").value;
@@ -100,13 +102,14 @@ window.addEventListener("DOMContentLoaded", () => {
 
     const container = document.getElementById("accommodations");
     container.innerHTML = "";
+    imagesByAccommodation = {};
 
     for (let acc of data) {
       const imgRes = await supabase.from("accommodation_images").select("image_url").eq("accommodation_id", acc.id);
       const images = imgRes.data || [];
-      const imageTags = images.map(img => `<img src="${img.image_url}" width="100" style="margin:5px; border-radius:8px;">`).join(" ");
+      const imageTags = images.map((img, idx) => `<img src="${img.image_url}" width="100" style="margin:5px; border-radius:8px;" data-accid="${acc.id}" data-index="${idx}">`).join(" ");
+      imagesByAccommodation[acc.id] = images.map(img => img.image_url);
 
-      // Bewertungen laden und Durchschnitt berechnen
       const reviewRes = await supabase.from("reviews").select("rating").eq("accommodation_id", acc.id);
       const reviews = reviewRes.data || [];
       const avgRating = reviews.length > 0 
@@ -172,7 +175,7 @@ window.addEventListener("DOMContentLoaded", () => {
       console.error(error);
     } else {
       alert("Danke für deine Bewertung!");
-      loadAccommodations(); // Seite neu laden, damit Bewertung aktualisiert wird
+      loadAccommodations();
     }
   };
 
@@ -194,7 +197,7 @@ window.addEventListener("DOMContentLoaded", () => {
     }, 3000);
   }
 
-  // Event-Handling für Sterne Hover und Klick
+  // Sterne Hover
   document.addEventListener('mouseover', function(e) {
     if (e.target.classList.contains('star')) {
       const stars = Array.from(e.target.parentElement.querySelectorAll('.star'));
@@ -219,6 +222,73 @@ window.addEventListener("DOMContentLoaded", () => {
       submitRating(accommodationId, rating);
     }
   });
+
+  // Lightbox/ Galerie beim Klick auf Bilder
+  document.addEventListener('click', function(e) {
+    if (e.target.tagName === 'IMG' && e.target.closest('#accommodations')) {
+      const accId = e.target.dataset.accid;
+      const index = parseInt(e.target.dataset.index);
+      openGallery(accId, index);
+    }
+  });
+
+  function openGallery(accId, startIndex) {
+    const images = imagesByAccommodation[accId];
+    if (!images || images.length === 0) return;
+
+    let currentIndex = startIndex;
+
+    const lightbox = document.createElement('div');
+    lightbox.style.position = 'fixed';
+    lightbox.style.top = 0;
+    lightbox.style.left = 0;
+    lightbox.style.width = '100%';
+    lightbox.style.height = '100%';
+    lightbox.style.background = 'rgba(0,0,0,0.8)';
+    lightbox.style.display = 'flex';
+    lightbox.style.flexDirection = 'column';
+    lightbox.style.alignItems = 'center';
+    lightbox.style.justifyContent = 'center';
+    lightbox.style.zIndex = 9999;
+
+    const img = document.createElement('img');
+    img.src = images[currentIndex];
+    img.style.maxWidth = '90%';
+    img.style.maxHeight = '80%';
+    img.style.borderRadius = '10px';
+    img.style.boxShadow = '0 0 20px white';
+    img.style.marginBottom = '20px';
+
+    const controls = document.createElement('div');
+    controls.style.display = 'flex';
+    controls.style.gap = '20px';
+
+    const prev = document.createElement('button');
+    prev.textContent = "⟵";
+    const next = document.createElement('button');
+    next.textContent = "⟶";
+
+    prev.onclick = (e) => {
+      e.stopPropagation();
+      currentIndex = (currentIndex - 1 + images.length) % images.length;
+      img.src = images[currentIndex];
+    };
+
+    next.onclick = (e) => {
+      e.stopPropagation();
+      currentIndex = (currentIndex + 1) % images.length;
+      img.src = images[currentIndex];
+    };
+
+    controls.appendChild(prev);
+    controls.appendChild(next);
+    lightbox.appendChild(img);
+    lightbox.appendChild(controls);
+
+    document.body.appendChild(lightbox);
+
+    lightbox.onclick = () => lightbox.remove();
+  }
 
   loadAccommodations();
 });
