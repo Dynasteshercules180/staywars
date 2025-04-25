@@ -1,9 +1,8 @@
-// Neue Version von script.js mit:
-// - Login
-// - Unterkunft erstellen & bearbeiten
-// - Bild-Upload (bis 4 Bilder)
+// StayWars - script.js
+// Features: Login, Unterkunft erstellen/bearbeiten, Bild-Upload (bis 4 Bilder), Bewertungen
 
 window.addEventListener("DOMContentLoaded", () => {
+  // Supabase initialisieren
   const supabase = window.supabase.createClient(
     "https://bzoavgxcbnwphooqqvdm.supabase.co",
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ6b2F2Z3hjYm53cGhvb3FxdmRtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU1Njg2NTIsImV4cCI6MjA2MTE0NDY1Mn0.1u53rNL4AVmVsrehvwtVBOe-JzH5_YXTeOLlFTTWIDE"
@@ -14,6 +13,7 @@ window.addEventListener("DOMContentLoaded", () => {
     "tester": "nacht123"
   };
 
+  // Login-Funktion
   window.login = function () {
     const user = document.getElementById("login-username").value;
     const pass = document.getElementById("login-password").value;
@@ -28,6 +28,7 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   };
 
+  // Formular absenden
   document.getElementById("accommodation-form").addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -58,15 +59,23 @@ window.addEventListener("DOMContentLoaded", () => {
     }
 
     const newId = id || response.data[0].id;
-    const files = document.getElementById("images").files;
 
+    // Bild-Upload (maximal 4 Bilder)
+    const files = document.getElementById("images").files;
     if (files.length > 0) {
       for (let i = 0; i < Math.min(files.length, 4); i++) {
         const file = files[i];
         const filePath = `${newId}/${Date.now()}-${file.name}`;
-        const { error: uploadError } = await supabase.storage.from("accommodation-images").upload(filePath, file);
+
+        const { error: uploadError } = await supabase.storage
+          .from("accommodation-images")
+          .upload(filePath, file);
+
         if (!uploadError) {
-          const publicUrl = supabase.storage.from("accommodation-images").getPublicUrl(filePath).data.publicUrl;
+          const publicUrl = supabase.storage
+            .from("accommodation-images")
+            .getPublicUrl(filePath).data.publicUrl;
+
           await supabase.from("accommodation_images").insert({
             accommodation_id: newId,
             image_url: publicUrl
@@ -81,15 +90,17 @@ window.addEventListener("DOMContentLoaded", () => {
     loadAccommodations();
   });
 
+  // Unterkünfte laden
   async function loadAccommodations() {
     const { data, error } = await supabase.from("accommodations").select("*").order("created_at", { ascending: false });
+
     const container = document.getElementById("accommodations");
     container.innerHTML = "";
 
     for (let acc of data) {
       const imgRes = await supabase.from("accommodation_images").select("image_url").eq("accommodation_id", acc.id);
       const images = imgRes.data || [];
-      const imageTags = images.map(img => `<img src="${img.image_url}" width="100">`).join(" ");
+      const imageTags = images.map(img => `<img src="${img.image_url}" width="100" style="margin:5px; border-radius:8px;">`).join(" ");
 
       const div = document.createElement("div");
       div.innerHTML = `
@@ -112,6 +123,7 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  // Unterkunft zum Bearbeiten laden
   window.editAccommodation = async function (id) {
     const { data } = await supabase.from("accommodations").select("*").eq("id", id).single();
     if (data) {
@@ -129,6 +141,7 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   };
 
+  // Bewertung speichern
   window.submitRating = async function (accommodation_id) {
     const input = document.getElementById(`rate-${accommodation_id}`);
     const rating = parseInt(input.value);
@@ -143,5 +156,6 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   };
 
+  // Beim Start laden
   loadAccommodations();
 });
