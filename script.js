@@ -1,5 +1,5 @@
 // StayWars - script.js
-// Features: Login, Unterkunft erstellen/bearbeiten, Bild-Upload, Sternebewertung, Durchschnittsanzeige, Hover-Großbild und Galerie
+// Funktionen: Login, Unterkunft erstellen/bearbeiten, Bild-Upload, Sternebewertung, Durchschnitt, Hover-Großbild, Galerie
 
 window.addEventListener("DOMContentLoaded", () => {
   const supabase = window.supabase.createClient(
@@ -91,7 +91,6 @@ window.addEventListener("DOMContentLoaded", () => {
     }
 
     showSuccessMessage("Unterkunft erfolgreich gespeichert!");
-
     document.getElementById("accommodation-form").reset();
     document.getElementById("accommodation-id").value = "";
     loadAccommodations();
@@ -197,7 +196,7 @@ window.addEventListener("DOMContentLoaded", () => {
     }, 3000);
   }
 
-  // Event: Klick auf Sterne oder Bilder
+  // Klick-Events: Sterne oder Galerie
   document.addEventListener('click', function(e) {
     if (e.target.classList.contains('star')) {
       const accommodationId = e.target.parentElement.dataset.id;
@@ -227,9 +226,10 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Hover: Großes Bild anzeigen
+  // Hover: Großbild wechseln
   document.addEventListener('mouseover', function(e) {
-    if (e.target.tagName === 'IMG' && e.target.closest('#accommodations') && !document.getElementById('hoverImage')) {
+    if (e.target.tagName === 'IMG' && e.target.closest('#accommodations')) {
+      removeHoverImage();
       showHoverImage(e.target.src);
     }
   });
