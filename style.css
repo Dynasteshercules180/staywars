@@ -159,3 +159,25 @@ a:hover {
   z-index: 2;
 }
 
+/* Lightbox Styling */
+.lightbox img {
+  max-width: 90%;
+  max-height: 80%;
+  border-radius: 10px;
+  box-shadow: 0 0 20px white;
+}
+
+.lightbox button {
+  background: rgba(255,255,255,0.8);
+  border: none;
+  font-size: 2em;
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 50%;
+  transition: background 0.3s;
+}
+
+.lightbox button:hover {
+  background: #fff;
+}
+
