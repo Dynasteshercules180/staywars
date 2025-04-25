@@ -45,16 +45,18 @@ window.addEventListener("DOMContentLoaded", () => {
     let newId = id;
     let response;
 
+    
     if (id) {
-      response = await supabase.from("accommodations").update(data).eq("id", id);
-    } else {
-      response = await supabase.from("accommodations").insert([data]);
-      if (response.error) {
+      response = await supabase.from("accommodations").insert([data]).select();
+
+      if (response.error || !response.data || response.data.length === 0) {
         alert("Fehler beim Speichern!");
-        console.error(response.error);
+        console.error(response.error || "Keine Daten zurückgegeben.");
         return;
       }
+
       newId = response.data[0].id;
+
     }
 
     const files = document.getElementById("images").files;
