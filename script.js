@@ -42,20 +42,20 @@ window.addEventListener("DOMContentLoaded", () => {
       link: document.getElementById("link").value
     };
 
+    let newId = id;
     let response;
+
     if (id) {
       response = await supabase.from("accommodations").update(data).eq("id", id);
     } else {
       response = await supabase.from("accommodations").insert([data]);
+      if (response.error) {
+        alert("Fehler beim Speichern!");
+        console.error(response.error);
+        return;
+      }
+      newId = response.data[0].id;
     }
-
-    if (response.error) {
-      alert("Fehler beim Speichern!");
-      console.error(response.error);
-      return;
-    }
-
-    const newId = id ? id : response.data[0].id;
 
     const files = document.getElementById("images").files;
     if (files.length > 0) {
