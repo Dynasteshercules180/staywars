@@ -1,5 +1,5 @@
 // StayWars - script.js
-// Features: Login, Unterkunft erstellen/bearbeiten, Bild-Upload, Sternebewertung, Erfolgsmeldung
+// Features: Login, Unterkunft erstellen/bearbeiten, Bild-Upload, Sternebewertung mit Username, Durchschnittsanzeige, Erfolgsmeldung
 
 window.addEventListener("DOMContentLoaded", () => {
   const supabase = window.supabase.createClient(
@@ -106,8 +106,18 @@ window.addEventListener("DOMContentLoaded", () => {
       const images = imgRes.data || [];
       const imageTags = images.map(img => `<img src="${img.image_url}" width="100" style="margin:5px; border-radius:8px;">`).join(" ");
 
+      // Bewertungen laden und Durchschnitt berechnen
+      const reviewRes = await supabase.from("reviews").select("rating").eq("accommodation_id", acc.id);
+      const reviews = reviewRes.data || [];
+      const avgRating = reviews.length > 0 
+        ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)
+        : null;
+
       const div = document.createElement("div");
+      div.classList.add("accommodation-card");
+
       div.innerHTML = `
+        <div class="rating-badge">${avgRating ? `⭐ ${avgRating}` : "Noch keine Bewertung"}</div>
         <h3>${acc.title}</h3>
         ${imageTags}<br>
         <p>${acc.description}</p>
@@ -142,30 +152,29 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-window.submitRating = async function (accommodation_id, rating) {
-  if (rating < 1 || rating > 5) return alert("Nur 1–5 Sterne erlaubt!");
+  window.submitRating = async function (accommodation_id, rating) {
+    if (rating < 1 || rating > 5) return alert("Nur 1–5 Sterne erlaubt!");
 
-  const username = prompt("Bitte gib deinen Namen ein:");
+    const username = prompt("Bitte gib deinen Namen ein:");
+    if (!username || username.trim() === "") {
+      alert("Name ist erforderlich, um zu bewerten.");
+      return;
+    }
 
-  if (!username || username.trim() === "") {
-    alert("Name ist erforderlich, um zu bewerten.");
-    return;
-  }
+    const { error } = await supabase.from("reviews").insert([{
+      accommodation_id,
+      rating,
+      username: username.trim()
+    }]);
 
-  const { error } = await supabase.from("reviews").insert([{
-    accommodation_id,
-    rating,
-    username: username.trim()
-  }]);
-
-  if (error) {
-    alert("Fehler bei Bewertung!");
-    console.error(error);
-  } else {
-    alert("Danke für deine Bewertung!");
-  }
-};
-
+    if (error) {
+      alert("Fehler bei Bewertung!");
+      console.error(error);
+    } else {
+      alert("Danke für deine Bewertung!");
+      loadAccommodations(); // Seite neu laden, damit Bewertung aktualisiert wird
+    }
+  };
 
   function showSuccessMessage(message) {
     const msg = document.createElement("div");
@@ -185,7 +194,7 @@ window.submitRating = async function (accommodation_id, rating) {
     }, 3000);
   }
 
-  // ✨ Neues Event-Handling für Sterne Hover und Klick
+  // Event-Handling für Sterne Hover und Klick
   document.addEventListener('mouseover', function(e) {
     if (e.target.classList.contains('star')) {
       const stars = Array.from(e.target.parentElement.querySelectorAll('.star'));
