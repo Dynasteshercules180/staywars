@@ -142,17 +142,30 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  window.submitRating = async function (accommodation_id, rating) {
-    if (rating < 1 || rating > 5) return alert("Nur 1–5 Sterne erlaubt!");
+window.submitRating = async function (accommodation_id, rating) {
+  if (rating < 1 || rating > 5) return alert("Nur 1–5 Sterne erlaubt!");
 
-    const { error } = await supabase.from("reviews").insert([{ accommodation_id, rating }]);
-    if (error) {
-      alert("Fehler bei Bewertung!");
-      console.error(error);
-    } else {
-      alert("Danke für deine Bewertung!");
-    }
-  };
+  const username = prompt("Bitte gib deinen Namen ein:");
+
+  if (!username || username.trim() === "") {
+    alert("Name ist erforderlich, um zu bewerten.");
+    return;
+  }
+
+  const { error } = await supabase.from("reviews").insert([{
+    accommodation_id,
+    rating,
+    username: username.trim()
+  }]);
+
+  if (error) {
+    alert("Fehler bei Bewertung!");
+    console.error(error);
+  } else {
+    alert("Danke für deine Bewertung!");
+  }
+};
+
 
   function showSuccessMessage(message) {
     const msg = document.createElement("div");
