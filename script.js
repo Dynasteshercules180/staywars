@@ -1,5 +1,5 @@
-// StayWars - neues Script
-// Login, Unterkunft erstellen, Galerie mit Swipe, Sternebewertung
+// StayWars - Script.js
+// Login, Unterkunft erstellen/bearbeiten, Bild-Upload, Sternebewertung, Galerie mit Swipe
 
 window.addEventListener("DOMContentLoaded", () => {
   const supabase = window.supabase.createClient(
@@ -190,14 +190,36 @@ window.addEventListener("DOMContentLoaded", () => {
     }, 3000);
   }
 
-  // ⭐ Sterne Click-Event
+  // ⭐ Sterne Hover und Klick
+  document.addEventListener('mouseover', function(e) {
+    if (e.target.classList.contains('star')) {
+      const stars = Array.from(e.target.parentElement.querySelectorAll('.star'));
+      const hoverIndex = stars.indexOf(e.target);
+      stars.forEach((star, idx) => {
+        if (idx <= hoverIndex) {
+          star.style.color = 'gold';
+        } else {
+          star.style.color = 'lightgray';
+        }
+      });
+    }
+  });
+
+  document.addEventListener('mouseout', function(e) {
+    if (e.target.classList.contains('star')) {
+      const stars = Array.from(e.target.parentElement.querySelectorAll('.star'));
+      stars.forEach(star => {
+        star.style.color = star.classList.contains('selected') ? 'gold' : 'lightgray';
+      });
+    }
+  });
+
   document.addEventListener('click', function(e) {
     if (e.target.classList.contains('star')) {
       const stars = Array.from(e.target.parentElement.querySelectorAll('.star'));
       const clickedIndex = stars.indexOf(e.target);
-
       stars.forEach((star, idx) => {
-        if (idx >= clickedIndex) {
+        if (idx <= clickedIndex) {
           star.classList.add('selected');
         } else {
           star.classList.remove('selected');
@@ -207,11 +229,10 @@ window.addEventListener("DOMContentLoaded", () => {
       const accommodationId = e.target.parentElement.dataset.id;
       const rating = e.target.dataset.value;
       submitRating(accommodationId, rating);
-      return;
     }
   });
 
-  // 📷 Galerie und Hover
+  // 📷 Galerie
 
   let touchStartX = 0;
   let currentGalleryImages = [];
@@ -254,7 +275,7 @@ window.addEventListener("DOMContentLoaded", () => {
     img.style.marginBottom = '20px';
 
     const controls = document.createElement('div');
-    controls.style.display = window.innerWidth > 768 ? 'flex' : 'none'; // Buttons nur auf Desktop
+    controls.style.display = window.innerWidth > 768 ? 'flex' : 'none';
     controls.style.gap = '20px';
 
     const prev = document.createElement('button');
