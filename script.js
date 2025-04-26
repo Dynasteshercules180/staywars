@@ -1,10 +1,10 @@
-// StayWars - Script.js
+// StayWars - Neues Script.js
 // Login, Unterkunft erstellen/bearbeiten, Bild-Upload, Sternebewertung, Galerie mit Swipe
 
 window.addEventListener("DOMContentLoaded", () => {
   const supabase = window.supabase.createClient(
     "https://bzoavgxcbnwphooqqvdm.supabase.co",
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ6b2F2Z3hjYm53cGhvb3FxdmRtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU1Njg2NTIsImV4cCI6MjA2MTE0NDY1Mn0.1u53rNL4AVmVsrehvwtVBOe-JzH5_YXTeOLlFTTWIDE"
+    "DEIN_PUBLIC_ANON_KEY"
   );
 
   const VALID_USERS = {
@@ -190,16 +190,16 @@ window.addEventListener("DOMContentLoaded", () => {
     }, 3000);
   }
 
-  // ⭐ Sterne Hover und Klick
+  // ⭐ Sterne Hover und Klick-Logik
   document.addEventListener('mouseover', function(e) {
     if (e.target.classList.contains('star')) {
       const stars = Array.from(e.target.parentElement.querySelectorAll('.star'));
       const hoverIndex = stars.indexOf(e.target);
       stars.forEach((star, idx) => {
         if (idx <= hoverIndex) {
-          star.style.color = 'gold';
+          star.classList.add('hover');
         } else {
-          star.style.color = 'lightgray';
+          star.classList.remove('hover');
         }
       });
     }
@@ -209,7 +209,7 @@ window.addEventListener("DOMContentLoaded", () => {
     if (e.target.classList.contains('star')) {
       const stars = Array.from(e.target.parentElement.querySelectorAll('.star'));
       stars.forEach(star => {
-        star.style.color = star.classList.contains('selected') ? 'gold' : 'lightgray';
+        star.classList.remove('hover');
       });
     }
   });
@@ -217,12 +217,12 @@ window.addEventListener("DOMContentLoaded", () => {
   document.addEventListener('click', function(e) {
     if (e.target.classList.contains('star')) {
       const stars = Array.from(e.target.parentElement.querySelectorAll('.star'));
+      stars.forEach(star => star.classList.remove('selected'));
+
       const clickedIndex = stars.indexOf(e.target);
       stars.forEach((star, idx) => {
         if (idx <= clickedIndex) {
           star.classList.add('selected');
-        } else {
-          star.classList.remove('selected');
         }
       });
 
@@ -233,7 +233,6 @@ window.addEventListener("DOMContentLoaded", () => {
   });
 
   // 📷 Galerie
-
   let touchStartX = 0;
   let currentGalleryImages = [];
   let currentIndex = 0;
@@ -304,7 +303,6 @@ window.addEventListener("DOMContentLoaded", () => {
 
     lightbox.onclick = () => lightbox.remove();
 
-    // Swipe Support
     lightbox.addEventListener('touchstart', (e) => {
       touchStartX = e.touches[0].clientX;
     });
