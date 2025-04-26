@@ -1,5 +1,5 @@
 // StayWars - script.js
-// Features: Login, Unterkunft erstellen/bearbeiten, Bild-Upload, Sternebewertung, Durchschnitt, Hover-Großbild, Galerie
+// Login, Unterkunft erstellen, Bild-Upload, Sternebewertung, Galerie, Hover-Optimierung
 
 window.addEventListener("DOMContentLoaded", () => {
   const supabase = window.supabase.createClient(
@@ -181,13 +181,7 @@ window.addEventListener("DOMContentLoaded", () => {
   function showSuccessMessage(message) {
     const msg = document.createElement("div");
     msg.textContent = message;
-    msg.style.background = "#d4edda";
-    msg.style.color = "#155724";
-    msg.style.padding = "10px";
-    msg.style.margin = "10px 0";
-    msg.style.borderRadius = "6px";
-    msg.style.textAlign = "center";
-
+    msg.className = "success-message";
     const formSection = document.getElementById("form-section");
     formSection.insertBefore(msg, formSection.firstChild);
 
@@ -196,161 +190,26 @@ window.addEventListener("DOMContentLoaded", () => {
     }, 3000);
   }
 
-  // Klick-Events: Bewertung oder Galerie öffnen
+  // Sterne anklicken -> Auswahl farbig lassen
   document.addEventListener('click', function(e) {
     if (e.target.classList.contains('star')) {
+      const stars = Array.from(e.target.parentElement.querySelectorAll('.star'));
+      const clickedIndex = stars.indexOf(e.target);
+
+      stars.forEach((star, idx) => {
+        if (idx >= clickedIndex) {
+          star.classList.add('selected');
+        } else {
+          star.classList.remove('selected');
+        }
+      });
+
       const accommodationId = e.target.parentElement.dataset.id;
       const rating = e.target.dataset.value;
       submitRating(accommodationId, rating);
       return;
     }
-
-    if (e.target.id === 'hoverImage' || (e.target.parentElement && e.target.parentElement.id === 'hoverImage')) {
-      const src = e.target.tagName === 'IMG' ? e.target.src : e.target.querySelector('img').src;
-      for (let accId in imagesByAccommodation) {
-        const index = imagesByAccommodation[accId].indexOf(src);
-        if (index !== -1) {
-          removeHoverImage();
-          openGallery(accId, index);
-          break;
-        }
-      }
-      return;
-    }
-
-    if (e.target.tagName === 'IMG' && e.target.closest('#accommodations')) {
-      const accId = e.target.dataset.accid;
-      const index = parseInt(e.target.dataset.index);
-      openGallery(accId, index);
-      return;
-    }
   });
-
-  // Sterne Hover: von rechts nach links färben
-  document.addEventListener('mouseover', function(e) {
-    if (e.target.classList.contains('star')) {
-      const stars = Array.from(e.target.parentElement.querySelectorAll('.star'));
-      const hoverIndex = stars.indexOf(e.target);
-      stars.forEach((star, idx) => {
-        star.style.color = idx <= hoverIndex ? 'gold' : 'gray';
-      });
-    }
-  });
-
-  document.addEventListener('mouseout', function(e) {
-    if (e.target.classList.contains('star')) {
-      const stars = Array.from(e.target.parentElement.querySelectorAll('.star'));
-      stars.forEach(star => star.style.color = 'gray');
-    }
-  });
-
-  // Hover auf Bild = Großes Bild anzeigen
-  document.addEventListener('mouseover', function(e) {
-    if (e.target.tagName === 'IMG' && e.target.closest('#accommodations')) {
-      removeHoverImage();
-      showHoverImage(e.target.src);
-    }
-  });
-
-  document.addEventListener('mousemove', function(e) {
-    const hoverImage = document.getElementById('hoverImage');
-    if (hoverImage && !e.target.closest('#accommodations') && e.target.id !== 'hoverImage') {
-      removeHoverImage();
-    }
-  });
-
-  function showHoverImage(src) {
-    const hoverImage = document.createElement('div');
-    hoverImage.id = 'hoverImage';
-    hoverImage.style.position = 'fixed';
-    hoverImage.style.top = '0';
-    hoverImage.style.left = '0';
-    hoverImage.style.width = '100vw';
-    hoverImage.style.height = '100vh';
-    hoverImage.style.background = 'rgba(0,0,0,0.8)';
-    hoverImage.style.display = 'flex';
-    hoverImage.style.alignItems = 'center';
-    hoverImage.style.justifyContent = 'center';
-    hoverImage.style.zIndex = '10000';
-    hoverImage.style.cursor = 'pointer';
-
-    const img = document.createElement('img');
-    img.src = src;
-    img.style.maxWidth = '90%';
-    img.style.maxHeight = '90%';
-    img.style.borderRadius = '10px';
-    img.style.boxShadow = '0 0 20px white';
-
-    hoverImage.appendChild(img);
-    document.body.appendChild(hoverImage);
-
-    hoverImage.onclick = () => removeHoverImage();
-  }
-
-  function removeHoverImage() {
-    const hoverImage = document.getElementById('hoverImage');
-    if (hoverImage) {
-      hoverImage.remove();
-    }
-  }
-
-  function openGallery(accId, startIndex) {
-    const images = imagesByAccommodation[accId];
-    if (!images || images.length === 0) return;
-
-    let currentIndex = startIndex;
-
-    const lightbox = document.createElement('div');
-    lightbox.style.position = 'fixed';
-    lightbox.style.top = 0;
-    lightbox.style.left = 0;
-    lightbox.style.width = '100%';
-    lightbox.style.height = '100%';
-    lightbox.style.background = 'rgba(0,0,0,0.8)';
-    lightbox.style.display = 'flex';
-    lightbox.style.flexDirection = 'column';
-    lightbox.style.alignItems = 'center';
-    lightbox.style.justifyContent = 'center';
-    lightbox.style.zIndex = 9999;
-
-    const img = document.createElement('img');
-    img.src = images[currentIndex];
-    img.style.maxWidth = '90%';
-    img.style.maxHeight = '80%';
-    img.style.borderRadius = '10px';
-    img.style.boxShadow = '0 0 20px white';
-    img.style.marginBottom = '20px';
-
-    const controls = document.createElement('div');
-    controls.style.display = 'flex';
-    controls.style.gap = '20px';
-
-    const prev = document.createElement('button');
-    prev.textContent = "⟵";
-    const next = document.createElement('button');
-    next.textContent = "⟶";
-
-    prev.onclick = (e) => {
-      e.stopPropagation();
-      currentIndex = (currentIndex - 1 + images.length) % images.length;
-      img.src = images[currentIndex];
-    };
-
-    next.onclick = (e) => {
-      e.stopPropagation();
-      currentIndex = (currentIndex + 1) % images.length;
-      img.src = images[currentIndex];
-    };
-
-    controls.appendChild(prev);
-    controls.appendChild(next);
-    lightbox.appendChild(img);
-    lightbox.appendChild(controls);
-
-    document.body.appendChild(lightbox);
-
-    lightbox.onclick = () => lightbox.remove();
-  }
 
   loadAccommodations();
 });
