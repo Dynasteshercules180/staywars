@@ -232,7 +232,7 @@ window.addEventListener("DOMContentLoaded", () => {
       const stars = Array.from(e.target.parentElement.querySelectorAll('.star'));
       const hoverIndex = stars.indexOf(e.target);
       stars.forEach((star, idx) => {
-        star.style.color = idx >= hoverIndex ? 'gold' : 'gray';
+        star.style.color = idx <= hoverIndex ? 'gold' : 'gray';
       });
     }
   });
