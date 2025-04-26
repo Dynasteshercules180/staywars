@@ -6,6 +6,7 @@ body, html {
   background-color: #f5f7fa;
 }
 
+/* Header mit Logo */
 header {
   width: 100%;
   height: 300px;
@@ -26,16 +27,16 @@ header img {
   right: 20px;
   width: 300px;
   background: rgba(255, 255, 255, 0.95);
-  padding: 15px;
+  padding: 20px;
   border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   z-index: 10;
 }
 
 #auth input[type="text"],
 #auth input[type="password"] {
   width: 100%;
-  padding: 8px;
+  padding: 10px;
   margin: 8px 0;
   border: 1px solid #ccc;
   border-radius: 5px;
@@ -43,7 +44,7 @@ header img {
 
 #auth button {
   width: 100%;
-  padding: 10px;
+  padding: 12px;
   margin-top: 10px;
   background-color: #4CAF50;
   color: white;
@@ -63,14 +64,15 @@ header img {
   background: #ffffff;
   width: 80%;
   border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  text-align: center;
 }
 
 #form-section input, 
 #form-section textarea {
   width: 100%;
-  margin-bottom: 10px;
-  padding: 10px;
+  margin-bottom: 12px;
+  padding: 12px;
   border: 1px solid #ccc;
   border-radius: 5px;
   box-sizing: border-box;
@@ -78,11 +80,12 @@ header img {
 
 #form-section button {
   width: 100%;
-  padding: 12px;
+  padding: 14px;
   background-color: #2196F3;
   color: white;
   border: none;
   border-radius: 5px;
+  font-size: 16px;
   cursor: pointer;
 }
 
@@ -90,27 +93,29 @@ header img {
   background-color: #0b7dda;
 }
 
-/* Unterkunftskarten */
+/* Bereich für alle Unterkünfte */
 #accommodations {
-  margin: 30px auto;
+  margin: 50px auto;
   width: 90%;
   display: flex;
   flex-wrap: wrap;
-  gap: 20px;
+  gap: 30px;
   justify-content: center;
 }
 
+/* Unterkunftskarten */
 .accommodation-card {
   background: white;
   padding: 20px;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  width: 300px;
+  width: 400px;
   position: relative;
+  text-align: center;
 }
 
 .accommodation-card img {
-  width: 90px;
+  width: 100px;
   height: auto;
   border-radius: 8px;
   margin: 5px;
@@ -120,18 +125,6 @@ header img {
 
 .accommodation-card img:hover {
   transform: scale(1.1);
-}
-
-/* Bewertung */
-.rating {
-  margin-top: 10px;
-}
-
-.rating .star {
-  font-size: 24px;
-  cursor: pointer;
-  color: gray;
-  transition: color 0.3s ease;
 }
 
 /* Durchschnittsbewertung */
@@ -147,12 +140,24 @@ header img {
   font-size: 16px;
 }
 
-/* Hover großes Bild */
+/* Bewertung: Sterne */
+.rating {
+  margin-top: 12px;
+}
+
+.rating .star {
+  font-size: 26px;
+  cursor: pointer;
+  color: gray;
+  transition: color 0.3s ease;
+}
+
+/* Hover-Großbild */
 #hoverImage {
   transition: opacity 0.3s ease;
 }
 
-/* Lightbox Galerie */
+/* Galerie */
 .lightbox {
   background-color: rgba(0, 0, 0, 0.8);
 }
@@ -173,40 +178,32 @@ button:hover {
   background: #1976D2;
 }
 
-/* Mobile Anpassungen */
-@media (max-width: 768px) {
-  #auth {
-    width: 90%;
-    right: 5%;
-    top: 10px;
-  }
+/* --- Responsive Bereich --- */
 
-  #form-section {
-    width: 90%;
-    margin: 20px auto;
+/* Tablets */
+@media (max-width: 1024px) {
+  #auth {
+    width: 250px;
+    top: 10px;
+    right: 10px;
     padding: 15px;
   }
 
   .accommodation-card {
     width: 90%;
-  }
-
-  .accommodation-card img {
-    width: 80px;
+    margin: 10px auto;
   }
 
   .rating-badge {
+    font-size: 14px;
+    padding: 6px 10px;
     top: 10px;
     right: 10px;
-    font-size: 14px;
-  }
-
-  .rating .star {
-    font-size: 20px;
   }
 }
 
-@media (max-width: 480px) {
+/* Smartphones */
+@media (max-width: 600px) {
   header {
     height: 200px;
   }
@@ -216,17 +213,28 @@ button:hover {
   }
 
   #auth {
-    width: 95%;
+    width: 90%;
+    top: 10px;
+    right: 5%;
     font-size: 14px;
-    right: 2.5%;
+  }
+
+  #form-section {
+    width: 95%;
+    margin: 20px auto;
+  }
+
+  .accommodation-card {
+    width: 95%;
+    margin: 15px auto;
   }
 
   .accommodation-card img {
-    width: 70px;
+    width: 80px;
   }
 
   .rating .star {
-    font-size: 18px;
+    font-size: 22px;
   }
 
   .rating-badge {
