@@ -1,269 +1,324 @@
-/* StayWars – sauberes modernes Design */
+// StayWars - Neues Script.js
+// Login, Unterkunft erstellen/bearbeiten, Bild-Upload, Sternebewertung, Galerie mit Swipe
 
-/* Grundlayout */
-body {
-  font-family: "Segoe UI", sans-serif;
-  margin: 0;
-  padding: 0;
-  background-color: #f8f9fa;
-  color: #333;
-}
+window.addEventListener("DOMContentLoaded", () => {
+  const supabase = window.supabase.createClient(
+    "https://bzoavgxcbnwphooqqvdm.supabase.co",
+    "DEIN_PUBLIC_ANON_KEY"
+  );
 
-/* Hero Header */
-header.hero {
-  width: 100%;
-  height: auto;
-  overflow: hidden;
-}
+  const VALID_USERS = {
+    "admin": "staywars",
+    "tester": "nacht123"
+  };
 
-.hero-image {
-  width: 100%;
-  height: auto;
-  object-fit: cover;
-}
+  let imagesByAccommodation = {};
 
-/* Sektionen */
-section {
-  margin: 30px auto;
-  max-width: 800px;
-  background-color: #fff;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
+  window.login = function () {
+    const user = document.getElementById("login-username").value;
+    const pass = document.getElementById("login-password").value;
+    const status = document.getElementById("login-status");
 
-h2 {
-  margin-top: 0;
-  text-align: center;
-  font-size: 1.8em;
-  color: #222;
-}
+    if (VALID_USERS[user] && VALID_USERS[user] === pass) {
+      document.getElementById("auth").style.display = "none";
+      document.getElementById("form-section").style.display = "block";
+      status.textContent = "";
+    } else {
+      status.textContent = "Falscher Login!";
+    }
+  };
 
-/* Formular */
-input[type="text"],
-input[type="number"],
-input[type="password"],
-textarea,
-input[type="file"] {
-  width: 100%;
-  padding: 10px;
-  margin: 6px 0 12px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 1em;
-  box-sizing: border-box;
-}
+  document.getElementById("accommodation-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-textarea {
-  resize: vertical;
-}
+    const id = document.getElementById("accommodation-id").value;
+    const data = {
+      title: document.getElementById("title").value,
+      description: document.getElementById("description").value,
+      location: document.getElementById("location").value,
+      price: parseFloat(document.getElementById("price").value),
+      pros: document.getElementById("pros").value,
+      cons: document.getElementById("cons").value,
+      rooms: parseInt(document.getElementById("rooms").value),
+      bathrooms: parseInt(document.getElementById("bathrooms").value),
+      link: document.getElementById("link").value
+    };
 
-/* Buttons */
-button {
-  background-color: #222;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  font-size: 1em;
-  border-radius: 6px;
-  cursor: pointer;
-}
+    let newId = id;
+    let response;
 
-button:hover {
-  background-color: #444;
-}
+    if (id) {
+      response = await supabase.from("accommodations").update(data).eq("id", id);
+    } else {
+      response = await supabase.from("accommodations").insert([data]).select();
+      if (response.error || !response.data || response.data.length === 0) {
+        alert("Fehler beim Speichern!");
+        console.error(response.error || "Keine Daten zurückgegeben.");
+        return;
+      }
+      newId = response.data[0].id;
+    }
 
-/* Unterkunftseinträge */
-#accommodations > div {
-  margin-bottom: 30px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid #ddd;
-  position: relative;
-}
+    const files = document.getElementById("images").files;
+    if (files.length > 0) {
+      for (let i = 0; i < Math.min(files.length, 4); i++) {
+        const file = files[i];
+        if (!file || !file.name || file.size === 0) continue;
 
-/* Unterkunftsbilder */
-#accommodations img {
-  max-width: 120px;
-  height: auto;
-  margin: 6px;
-  border-radius: 8px;
-  box-shadow: 0 1px 5px rgba(0,0,0,0.2);
-  transition: transform 0.3s ease;
-  cursor: pointer;
-}
+        const filePath = `${newId}/${Date.now()}-${file.name}`;
 
-#accommodations img:hover {
-  transform: scale(1.4);
-  z-index: 2;
-}
+        const { error: uploadError } = await supabase.storage
+          .from("accommodation-images")
+          .upload(filePath, file, {
+            cacheControl: '3600',
+            upsert: false
+          });
 
-/* Links */
-a {
-  color: #0077cc;
-  text-decoration: none;
-}
+        if (uploadError) {
+          console.error("Upload-Fehler:", uploadError);
+          continue;
+        }
 
-a:hover {
-  text-decoration: underline;
-}
+        const publicUrl = supabase.storage
+          .from("accommodation-images")
+          .getPublicUrl(filePath).data.publicUrl;
 
-/* ⭐ Sternebewertung */
-.rating {
-  margin-top: 10px;
-  text-align: center;
-}
+        await supabase.from("accommodation_images").insert({
+          accommodation_id: newId,
+          image_url: publicUrl
+        });
+      }
+    }
 
-.rating .star {
-  font-size: 28px;
-  cursor: pointer;
-  color: lightgray;
-  transition: color 0.3s ease;
-  user-select: none;
-}
+    showSuccessMessage("Unterkunft erfolgreich gespeichert!");
+    document.getElementById("accommodation-form").reset();
+    document.getElementById("accommodation-id").value = "";
+    loadAccommodations();
+  });
 
-/* Sterne Hover Vorschau */
-.rating .star.hover,
-.rating .star.selected {
-  color: gold;
-}
+  async function loadAccommodations() {
+    const { data, error } = await supabase.from("accommodations").select("*").order("created_at", { ascending: false });
 
-/* Durchschnittsbewertung */
-.rating-badge {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background-color: #ffc107;
-  color: #222;
-  padding: 5px 10px;
-  border-radius: 20px;
-  font-weight: bold;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-  font-size: 0.9em;
-}
+    const container = document.getElementById("accommodations");
+    container.innerHTML = "";
+    imagesByAccommodation = {};
 
-/* Erfolgsmeldung */
-.success-message {
-  background: #d4edda;
-  color: #155724;
-  padding: 10px;
-  margin: 10px 0;
-  border-radius: 6px;
-  text-align: center;
-}
+    for (let acc of data) {
+      const imgRes = await supabase.from("accommodation_images").select("image_url").eq("accommodation_id", acc.id);
+      const images = imgRes.data || [];
+      const imageTags = images.map((img, idx) => `<img src="${img.image_url}" width="100" style="margin:5px; border-radius:8px;" data-accid="${acc.id}" data-index="${idx}">`).join(" ");
+      imagesByAccommodation[acc.id] = images.map(img => img.image_url);
 
-/* Galerie Lightbox */
-.lightbox img {
-  max-width: 90%;
-  max-height: 80%;
-  border-radius: 10px;
-  box-shadow: 0 0 20px white;
-}
+      const reviewRes = await supabase.from("reviews").select("rating").eq("accommodation_id", acc.id);
+      const reviews = reviewRes.data || [];
+      const avgRating = reviews.length > 0 
+        ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)
+        : null;
 
-.lightbox button {
-  background: rgba(255,255,255,0.8);
-  border: none;
-  font-size: 2em;
-  cursor: pointer;
-  padding: 10px;
-  border-radius: 50%;
-  transition: background 0.3s;
-}
+      const div = document.createElement("div");
+      div.classList.add("accommodation-card");
 
-.lightbox button:hover {
-  background: #fff;
-}
-
-/* Login */
-#auth {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  width: 250px;
-  background-color: rgba(255, 255, 255, 0.95);
-  padding: 15px;
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  z-index: 10;
-}
-
-#auth input[type="text"],
-#auth input[type="password"] {
-  width: 100%;
-  padding: 8px;
-  margin: 8px 0;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  box-sizing: border-box;
-}
-
-#auth button {
-  width: 100%;
-  margin-top: 10px;
-}
-
-/* Tablets */
-@media (max-width: 1024px) {
-  #auth {
-    width: 200px;
-    right: 10px;
-    top: 10px;
-    padding: 12px;
+      div.innerHTML = `
+        <div class="rating-badge">${avgRating ? `⭐ ${avgRating}` : "Noch keine Bewertung"}</div>
+        <h3>${acc.title}</h3>
+        ${imageTags}<br>
+        <p>${acc.description}</p>
+        <p>Ort: ${acc.location} | Preis: €${acc.price}</p>
+        <p>Zimmer: ${acc.rooms} | Bäder: ${acc.bathrooms}</p>
+        <p><a href="${acc.link}" target="_blank">Zur Unterkunft</a></p>
+        <p><strong>Vorteile:</strong> ${acc.pros}</p>
+        <p><strong>Nachteile:</strong> ${acc.cons}</p>
+        <button onclick="editAccommodation('${acc.id}')">Bearbeiten</button>
+        <div class="rating" data-id="${acc.id}">
+          ${[1,2,3,4,5].map(n => `<span data-value="${n}" class="star">★</span>`).join('')}
+        </div>
+      `;
+      container.appendChild(div);
+    }
   }
 
-  .rating-badge {
-    top: 5px;
-    right: 5px;
-    font-size: 0.8em;
-  }
-}
+  window.editAccommodation = async function (id) {
+    const { data } = await supabase.from("accommodations").select("*").eq("id", id).single();
+    if (data) {
+      document.getElementById("accommodation-id").value = data.id;
+      document.getElementById("title").value = data.title;
+      document.getElementById("description").value = data.description;
+      document.getElementById("location").value = data.location;
+      document.getElementById("price").value = data.price;
+      document.getElementById("pros").value = data.pros;
+      document.getElementById("cons").value = data.cons;
+      document.getElementById("rooms").value = data.rooms;
+      document.getElementById("bathrooms").value = data.bathrooms;
+      document.getElementById("link").value = data.link;
+      document.getElementById("form-section").scrollIntoView({ behavior: "smooth" });
+    }
+  };
 
-/* Smartphones */
-@media (max-width: 600px) {
-  header.hero {
-    height: 200px;
+  window.submitRating = async function (accommodation_id, rating) {
+    if (rating < 1 || rating > 5) return alert("Nur 1–5 Sterne erlaubt!");
+
+    const username = prompt("Bitte gib deinen Namen ein:");
+    if (!username || username.trim() === "") {
+      alert("Name ist erforderlich, um zu bewerten.");
+      return;
+    }
+
+    const { error } = await supabase.from("reviews").insert([{
+      accommodation_id,
+      rating,
+      username: username.trim()
+    }]);
+
+    if (error) {
+      alert("Fehler bei Bewertung!");
+      console.error(error);
+    } else {
+      alert("Danke für deine Bewertung!");
+      loadAccommodations();
+    }
+  };
+
+  function showSuccessMessage(message) {
+    const msg = document.createElement("div");
+    msg.textContent = message;
+    msg.className = "success-message";
+    const formSection = document.getElementById("form-section");
+    formSection.insertBefore(msg, formSection.firstChild);
+
+    setTimeout(() => {
+      msg.remove();
+    }, 3000);
   }
 
-  .hero-image {
-    height: 200px;
+  // ⭐ Sterne Hover und Klick-Logik
+  document.addEventListener('mouseover', function(e) {
+    if (e.target.classList.contains('star')) {
+      const stars = Array.from(e.target.parentElement.querySelectorAll('.star'));
+      const hoverIndex = stars.indexOf(e.target);
+      stars.forEach((star, idx) => {
+        if (idx <= hoverIndex) {
+          star.classList.add('hover');
+        } else {
+          star.classList.remove('hover');
+        }
+      });
+    }
+  });
+
+  document.addEventListener('mouseout', function(e) {
+    if (e.target.classList.contains('star')) {
+      const stars = Array.from(e.target.parentElement.querySelectorAll('.star'));
+      stars.forEach(star => {
+        star.classList.remove('hover');
+      });
+    }
+  });
+
+  document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('star')) {
+      const stars = Array.from(e.target.parentElement.querySelectorAll('.star'));
+      stars.forEach(star => star.classList.remove('selected'));
+
+      const clickedIndex = stars.indexOf(e.target);
+      stars.forEach((star, idx) => {
+        if (idx <= clickedIndex) {
+          star.classList.add('selected');
+        }
+      });
+
+      const accommodationId = e.target.parentElement.dataset.id;
+      const rating = e.target.dataset.value;
+      submitRating(accommodationId, rating);
+    }
+  });
+
+  // 📷 Galerie
+  let touchStartX = 0;
+  let currentGalleryImages = [];
+  let currentIndex = 0;
+
+  document.addEventListener('click', function(e) {
+    if (e.target.tagName === 'IMG' && e.target.closest('#accommodations')) {
+      const accId = e.target.dataset.accid;
+      const index = parseInt(e.target.dataset.index);
+      openGallery(accId, index);
+    }
+  });
+
+  function openGallery(accId, startIndex) {
+    const images = imagesByAccommodation[accId];
+    if (!images || images.length === 0) return;
+
+    currentGalleryImages = images;
+    currentIndex = startIndex;
+
+    const lightbox = document.createElement('div');
+    lightbox.style.position = 'fixed';
+    lightbox.style.top = 0;
+    lightbox.style.left = 0;
+    lightbox.style.width = '100%';
+    lightbox.style.height = '100%';
+    lightbox.style.background = 'rgba(0,0,0,0.8)';
+    lightbox.style.display = 'flex';
+    lightbox.style.flexDirection = 'column';
+    lightbox.style.alignItems = 'center';
+    lightbox.style.justifyContent = 'center';
+    lightbox.style.zIndex = 9999;
+
+    const img = document.createElement('img');
+    img.src = images[currentIndex];
+    img.style.maxWidth = '90%';
+    img.style.maxHeight = '80%';
+    img.style.borderRadius = '10px';
+    img.style.boxShadow = '0 0 20px white';
+    img.style.marginBottom = '20px';
+
+    const controls = document.createElement('div');
+    controls.style.display = window.innerWidth > 768 ? 'flex' : 'none';
+    controls.style.gap = '20px';
+
+    const prev = document.createElement('button');
+    prev.textContent = "⟵";
+    const next = document.createElement('button');
+    next.textContent = "⟶";
+
+    prev.onclick = (e) => {
+      e.stopPropagation();
+      currentIndex = (currentIndex - 1 + images.length) % images.length;
+      img.src = images[currentIndex];
+    };
+
+    next.onclick = (e) => {
+      e.stopPropagation();
+      currentIndex = (currentIndex + 1) % images.length;
+      img.src = images[currentIndex];
+    };
+
+    controls.appendChild(prev);
+    controls.appendChild(next);
+    lightbox.appendChild(img);
+    lightbox.appendChild(controls);
+
+    document.body.appendChild(lightbox);
+
+    lightbox.onclick = () => lightbox.remove();
+
+    lightbox.addEventListener('touchstart', (e) => {
+      touchStartX = e.touches[0].clientX;
+    });
+
+    lightbox.addEventListener('touchend', (e) => {
+      const touchEndX = e.changedTouches[0].clientX;
+      if (touchEndX < touchStartX - 50) {
+        currentIndex = (currentIndex + 1) % images.length;
+        img.src = images[currentIndex];
+      }
+      if (touchEndX > touchStartX + 50) {
+        currentIndex = (currentIndex - 1 + images.length) % images.length;
+        img.src = images[currentIndex];
+      }
+    });
   }
 
-  #auth {
-    position: static;
-    width: 90%;
-    margin: 10px auto;
-    box-shadow: none;
-  }
-
-  #form-section {
-    width: 95%;
-    margin: 20px auto;
-    padding: 10px;
-  }
-
-  #accommodations {
-    width: 95%;
-  }
-
-  .accommodation-card img {
-    width: 80px;
-  }
-
-  .rating .star {
-    font-size: 24px;
-  }
-
-  .rating-badge {
-    font-size: 0.7em;
-    top: 5px;
-    right: 5px;
-  }
-
-  #accommodations img:hover {
-    transform: none;
-  }
-
-  .lightbox img {
-    max-width: 95%;
-    max-height: 70%;
-  }
-}
+  loadAccommodations();
+});
