@@ -1,5 +1,5 @@
 // StayWars - script.js
-// Funktionen: Login, Unterkunft erstellen/bearbeiten, Bild-Upload, Sternebewertung, Durchschnitt, Hover-Großbild, Galerie
+// Features: Login, Unterkunft erstellen/bearbeiten, Bild-Upload, Sternebewertung, Durchschnitt, Hover-Großbild, Galerie
 
 window.addEventListener("DOMContentLoaded", () => {
   const supabase = window.supabase.createClient(
@@ -196,7 +196,7 @@ window.addEventListener("DOMContentLoaded", () => {
     }, 3000);
   }
 
-  // Klick-Events: Sterne oder Galerie
+  // Klick-Events: Bewertung oder Galerie öffnen
   document.addEventListener('click', function(e) {
     if (e.target.classList.contains('star')) {
       const accommodationId = e.target.parentElement.dataset.id;
@@ -226,7 +226,25 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Hover: Großbild wechseln
+  // Sterne Hover: von rechts nach links färben
+  document.addEventListener('mouseover', function(e) {
+    if (e.target.classList.contains('star')) {
+      const stars = Array.from(e.target.parentElement.querySelectorAll('.star'));
+      const hoverIndex = stars.indexOf(e.target);
+      stars.forEach((star, idx) => {
+        star.style.color = idx >= hoverIndex ? 'gold' : 'gray';
+      });
+    }
+  });
+
+  document.addEventListener('mouseout', function(e) {
+    if (e.target.classList.contains('star')) {
+      const stars = Array.from(e.target.parentElement.querySelectorAll('.star'));
+      stars.forEach(star => star.style.color = 'gray');
+    }
+  });
+
+  // Hover auf Bild = Großes Bild anzeigen
   document.addEventListener('mouseover', function(e) {
     if (e.target.tagName === 'IMG' && e.target.closest('#accommodations')) {
       removeHoverImage();
