@@ -1,243 +1,209 @@
-/* Allgemeines Layout */
-body, html {
+/* StayWars – Modernes Styling */
+
+/* Grundstruktur */
+body {
+  font-family: "Segoe UI", sans-serif;
   margin: 0;
   padding: 0;
-  font-family: 'Arial', sans-serif;
-  background-color: #f5f7fa;
+  background-color: #f8f9fa;
+  color: #333;
 }
 
-/* Header mit Logo */
-header {
+/* Hero-Bereich */
+header.hero {
   width: 100%;
-  height: 300px;
+  height: auto;
   overflow: hidden;
-  position: relative;
+  margin: 0;
+  padding: 0;
 }
 
-header img {
-  width: 100%;
-  height: 300px;
+.hero-image {
+  width: 100vw;
+  height: auto;
+  display: block;
   object-fit: cover;
 }
 
-/* Login-Fenster */
+/* Allgemeine Sektionen */
+section {
+  margin: 30px auto;
+  max-width: 800px;
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+  margin-top: 0;
+  color: #222;
+  font-size: 1.6em;
+  text-align: center;
+}
+
+/* Formular-Elemente */
+input[type="text"],
+input[type="number"],
+input[type="password"],
+textarea,
+input[type="file"] {
+  width: 100%;
+  padding: 10px;
+  margin: 6px 0 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1em;
+  box-sizing: border-box;
+}
+
+textarea {
+  resize: vertical;
+}
+
+/* Buttons */
+button {
+  background-color: #222;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 1em;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+button:hover {
+  background-color: #444;
+}
+
+/* Unterkunftseinträge */
+#accommodations > div {
+  margin-bottom: 30px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #ddd;
+  position: relative;
+}
+
+/* Unterkunftsbilder */
+#accommodations img {
+  max-width: 100px;
+  height: auto;
+  margin: 6px;
+  border-radius: 8px;
+  box-shadow: 0 1px 5px rgba(0,0,0,0.2);
+}
+
+/* Links */
+a {
+  color: #0077cc;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Sternebewertung */
+.rating {
+  margin-top: 10px;
+}
+
+.rating .star {
+  font-size: 24px;
+  cursor: pointer;
+  color: gray;
+  transition: color 0.2s;
+}
+
+.rating .star:hover,
+.rating .star:hover ~ .star {
+  color: gold;
+}
+
+/* Durchschnittsbewertung-Badge */
+.rating-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: #ffc107;
+  color: #222;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-weight: bold;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+  font-size: 0.9em;
+}
+
+/* Erfolgsmeldung nach Speichern */
+.success-message {
+  background: #d4edda;
+  color: #155724;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 6px;
+  text-align: center;
+}
+#accommodations img {
+  max-width: 100px;
+  height: auto;
+  margin: 6px;
+  border-radius: 8px;
+  box-shadow: 0 1px 5px rgba(0,0,0,0.2);
+  transition: transform 0.3s ease;
+  cursor: pointer;
+}
+
+#accommodations img:hover {
+  transform: scale(1.5);
+  z-index: 2;
+}
+
+/* Lightbox Styling */
+.lightbox img {
+  max-width: 90%;
+  max-height: 80%;
+  border-radius: 10px;
+  box-shadow: 0 0 20px white;
+}
+
+.lightbox button {
+  background: rgba(255,255,255,0.8);
+  border: none;
+  font-size: 2em;
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 50%;
+  transition: background 0.3s;
+}
+
+.lightbox button:hover {
+  background: #fff;
+}
+
 #auth {
   position: absolute;
   top: 20px;
   right: 20px;
-  width: 300px;
-  background: rgba(255, 255, 255, 0.95);
-  padding: 20px;
+  width: 250px;
+  background-color: rgba(255, 255, 255, 0.95);
+  padding: 15px;
   border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   z-index: 10;
 }
 
 #auth input[type="text"],
 #auth input[type="password"] {
   width: 100%;
-  padding: 10px;
+  padding: 8px;
   margin: 8px 0;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
-
-#auth button {
-  width: 100%;
-  padding: 12px;
-  margin-top: 10px;
-  background-color: #4CAF50;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-#auth button:hover {
-  background-color: #45a049;
-}
-
-/* Formularbereich */
-#form-section {
-  margin: 40px auto;
-  padding: 20px;
-  background: #ffffff;
-  width: 80%;
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  text-align: center;
-}
-
-#form-section input, 
-#form-section textarea {
-  width: 100%;
-  margin-bottom: 12px;
-  padding: 12px;
   border: 1px solid #ccc;
   border-radius: 5px;
   box-sizing: border-box;
 }
 
-#form-section button {
+#auth button {
   width: 100%;
-  padding: 14px;
-  background-color: #2196F3;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  font-size: 16px;
-  cursor: pointer;
-}
-
-#form-section button:hover {
-  background-color: #0b7dda;
-}
-
-/* Bereich für alle Unterkünfte */
-#accommodations {
-  margin: 50px auto;
-  width: 90%;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 30px;
-  justify-content: center;
-}
-
-/* Unterkunftskarten */
-.accommodation-card {
-  background: white;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  width: 400px;
-  position: relative;
-  text-align: center;
-}
-
-.accommodation-card img {
-  width: 100px;
-  height: auto;
-  border-radius: 8px;
-  margin: 5px;
-  transition: transform 0.3s ease;
-  cursor: pointer;
-}
-
-.accommodation-card img:hover {
-  transform: scale(1.1);
-}
-
-/* Durchschnittsbewertung */
-.rating-badge {
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  background-color: #ffeb3b;
-  color: #333;
-  padding: 8px 12px;
-  border-radius: 20px;
-  font-weight: bold;
-  font-size: 16px;
-}
-
-/* Bewertung: Sterne */
-.rating {
-  margin-top: 12px;
-}
-
-.rating .star {
-  font-size: 26px;
-  cursor: pointer;
-  color: gray;
-  transition: color 0.3s ease;
-}
-
-/* Hover-Großbild */
-#hoverImage {
-  transition: opacity 0.3s ease;
-}
-
-/* Galerie */
-.lightbox {
-  background-color: rgba(0, 0, 0, 0.8);
-}
-
-/* Buttons Galerie */
-button {
-  font-size: 20px;
-  padding: 8px 16px;
-  margin: 0 5px;
-  border: none;
-  border-radius: 6px;
-  background: #2196F3;
-  color: white;
-  cursor: pointer;
-}
-
-button:hover {
-  background: #1976D2;
-}
-
-/* --- Responsive Bereich --- */
-
-/* Tablets */
-@media (max-width: 1024px) {
-  #auth {
-    width: 250px;
-    top: 10px;
-    right: 10px;
-    padding: 15px;
-  }
-
-  .accommodation-card {
-    width: 90%;
-    margin: 10px auto;
-  }
-
-  .rating-badge {
-    font-size: 14px;
-    padding: 6px 10px;
-    top: 10px;
-    right: 10px;
-  }
-}
-
-/* Smartphones */
-@media (max-width: 600px) {
-  header {
-    height: 200px;
-  }
-
-  header img {
-    height: 200px;
-  }
-
-  #auth {
-    width: 90%;
-    top: 10px;
-    right: 5%;
-    font-size: 14px;
-  }
-
-  #form-section {
-    width: 95%;
-    margin: 20px auto;
-  }
-
-  .accommodation-card {
-    width: 95%;
-    margin: 15px auto;
-  }
-
-  .accommodation-card img {
-    width: 80px;
-  }
-
-  .rating .star {
-    font-size: 22px;
-  }
-
-  .rating-badge {
-    font-size: 12px;
-  }
+  margin-top: 10px;
 }
