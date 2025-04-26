@@ -1,10 +1,10 @@
-// StayWars - Neues Script.js
-// Login, Unterkunft erstellen/bearbeiten, Bild-Upload, Sternebewertung, Galerie mit Swipe
+// StayWars - Saubere Version
+// Login, Unterkunft erstellen, Galerie + Swipe, saubere Bewertung
 
 window.addEventListener("DOMContentLoaded", () => {
   const supabase = window.supabase.createClient(
-    "https://bzoavgxcbnwphooqqvdm.supabase.co",
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ6b2F2Z3hjYm53cGhvb3FxdmRtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU1Njg2NTIsImV4cCI6MjA2MTE0NDY1Mn0.1u53rNL4AVmVsrehvwtVBOe-JzH5_YXTeOLlFTTWIDE"
+  "https://bzoavgxcbnwphooqqvdm.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ6b2F2Z3hjYm53cGhvb3FxdmRtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU1Njg2NTIsImV4cCI6MjA2MTE0NDY1Mn0.1u53rNL4AVmVsrehvwtVBOe-JzH5_YXTeOLlFTTWIDE"
   );
 
   const VALID_USERS = {
@@ -154,12 +154,12 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  window.submitRating = async function (accommodation_id, rating) {
-    if (rating < 1 || rating > 5) return alert("Nur 1–5 Sterne erlaubt!");
-
+  async function submitRating(accommodation_id, rating, clickedStars) {
     const username = prompt("Bitte gib deinen Namen ein:");
     if (!username || username.trim() === "") {
       alert("Name ist erforderlich, um zu bewerten.");
+      // Sterne zurücksetzen
+      clickedStars.forEach(star => star.classList.remove('selected'));
       return;
     }
 
@@ -172,11 +172,13 @@ window.addEventListener("DOMContentLoaded", () => {
     if (error) {
       alert("Fehler bei Bewertung!");
       console.error(error);
+      // Sterne zurücksetzen
+      clickedStars.forEach(star => star.classList.remove('selected'));
     } else {
       alert("Danke für deine Bewertung!");
       loadAccommodations();
     }
-  };
+  }
 
   function showSuccessMessage(message) {
     const msg = document.createElement("div");
@@ -190,7 +192,7 @@ window.addEventListener("DOMContentLoaded", () => {
     }, 3000);
   }
 
-  // ⭐ Sterne Hover und Klick-Logik
+  // Sterne Hover
   document.addEventListener('mouseover', function(e) {
     if (e.target.classList.contains('star')) {
       const stars = Array.from(e.target.parentElement.querySelectorAll('.star'));
@@ -214,6 +216,7 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  // Sterne Klick
   document.addEventListener('click', function(e) {
     if (e.target.classList.contains('star')) {
       const stars = Array.from(e.target.parentElement.querySelectorAll('.star'));
@@ -228,7 +231,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
       const accommodationId = e.target.parentElement.dataset.id;
       const rating = e.target.dataset.value;
-      submitRating(accommodationId, rating);
+      submitRating(accommodationId, rating, stars);
     }
   });
 
