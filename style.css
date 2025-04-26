@@ -1,6 +1,6 @@
-/* StayWars – Komplettes modernes Styling */
+/* StayWars – Modernes und mobiles CSS */
 
-/* Grundstruktur */
+/* Grundlayout */
 body {
   font-family: "Segoe UI", sans-serif;
   margin: 0;
@@ -9,19 +9,16 @@ body {
   color: #333;
 }
 
-/* Header mit Logo */
+/* Hero Header */
 header.hero {
   width: 100%;
   height: auto;
   overflow: hidden;
-  margin: 0;
-  padding: 0;
 }
 
 .hero-image {
-  width: 100vw;
+  width: 100%;
   height: auto;
-  display: block;
   object-fit: cover;
 }
 
@@ -37,9 +34,9 @@ section {
 
 h2 {
   margin-top: 0;
-  color: #222;
-  font-size: 1.6em;
   text-align: center;
+  font-size: 1.8em;
+  color: #222;
 }
 
 /* Formular-Elemente */
@@ -70,7 +67,6 @@ button {
   font-size: 1em;
   border-radius: 6px;
   cursor: pointer;
-  margin-top: 10px;
 }
 
 button:hover {
@@ -111,9 +107,10 @@ a:hover {
   text-decoration: underline;
 }
 
-/* Sternebewertung */
+/* ⭐ Sternebewertung */
 .rating {
   margin-top: 10px;
+  text-align: center;
 }
 
 .rating .star {
@@ -124,18 +121,18 @@ a:hover {
   user-select: none;
 }
 
-/* Hover Effekt */
+/* Hover über Sterne */
 .rating .star:hover,
 .rating .star:hover ~ .star {
   color: gold;
 }
 
-/* Aktiv ausgewählte Sterne */
+/* Ausgewählte Sterne */
 .rating .star.selected {
   color: gold;
 }
 
-/* Durchschnittsbewertung-Badge */
+/* Durchschnittsbewertung */
 .rating-badge {
   position: absolute;
   top: 10px;
@@ -159,7 +156,7 @@ a:hover {
   text-align: center;
 }
 
-/* Lightbox */
+/* Lightbox Galerie */
 .lightbox img {
   max-width: 90%;
   max-height: 80%;
@@ -227,7 +224,7 @@ a:hover {
   }
 
   #accommodations img:hover {
-    transform: scale(1.2); /* Reduzierter Zoom auf Tablet */
+    transform: scale(1.2);
   }
 }
 
@@ -258,10 +255,6 @@ a:hover {
     width: 95%;
   }
 
-  #accommodations > div {
-    padding-bottom: 20px;
-  }
-
   .accommodation-card img {
     width: 80px;
   }
@@ -277,7 +270,7 @@ a:hover {
   }
 
   #accommodations img:hover {
-    transform: none; /* Kein Hover-Zoom auf Handy */
+    transform: none;
   }
 
   .lightbox img {
