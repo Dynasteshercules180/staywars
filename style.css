@@ -1,4 +1,4 @@
-/* StayWars – Modernes Styling */
+/* StayWars – Komplettes modernes Styling */
 
 /* Grundstruktur */
 body {
@@ -9,7 +9,7 @@ body {
   color: #333;
 }
 
-/* Hero-Bereich */
+/* Header mit Logo */
 header.hero {
   width: 100%;
   height: auto;
@@ -117,14 +117,21 @@ a:hover {
 }
 
 .rating .star {
-  font-size: 24px;
+  font-size: 28px;
   cursor: pointer;
-  color: gray;
-  transition: color 0.2s;
+  color: lightgray;
+  transition: color 0.3s ease;
+  user-select: none;
 }
 
+/* Hover Effekt */
 .rating .star:hover,
 .rating .star:hover ~ .star {
+  color: gold;
+}
+
+/* Aktiv ausgewählte Sterne */
+.rating .star.selected {
   color: gold;
 }
 
@@ -220,7 +227,7 @@ a:hover {
   }
 
   #accommodations img:hover {
-    transform: scale(1.2); /* Weniger starker Zoom auf Tablets */
+    transform: scale(1.2); /* Reduzierter Zoom auf Tablet */
   }
 }
 
@@ -260,7 +267,7 @@ a:hover {
   }
 
   .rating .star {
-    font-size: 22px;
+    font-size: 24px;
   }
 
   .rating-badge {
@@ -270,7 +277,7 @@ a:hover {
   }
 
   #accommodations img:hover {
-    transform: none; /* Kein Hover-Zoom auf Handys */
+    transform: none; /* Kein Hover-Zoom auf Handy */
   }
 
   .lightbox img {
