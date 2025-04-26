@@ -87,11 +87,18 @@ button:hover {
 
 /* Unterkunftsbilder */
 #accommodations img {
-  max-width: 100px;
+  max-width: 120px;
   height: auto;
   margin: 6px;
   border-radius: 8px;
   box-shadow: 0 1px 5px rgba(0,0,0,0.2);
+  transition: transform 0.3s ease;
+  cursor: pointer;
+}
+
+#accommodations img:hover {
+  transform: scale(1.4);
+  z-index: 2;
 }
 
 /* Links */
@@ -135,7 +142,7 @@ a:hover {
   font-size: 0.9em;
 }
 
-/* Erfolgsmeldung nach Speichern */
+/* Erfolgsmeldung */
 .success-message {
   background: #d4edda;
   color: #155724;
@@ -144,22 +151,8 @@ a:hover {
   border-radius: 6px;
   text-align: center;
 }
-#accommodations img {
-  max-width: 100px;
-  height: auto;
-  margin: 6px;
-  border-radius: 8px;
-  box-shadow: 0 1px 5px rgba(0,0,0,0.2);
-  transition: transform 0.3s ease;
-  cursor: pointer;
-}
 
-#accommodations img:hover {
-  transform: scale(1.5);
-  z-index: 2;
-}
-
-/* Lightbox Styling */
+/* Lightbox */
 .lightbox img {
   max-width: 90%;
   max-height: 80%;
@@ -181,6 +174,7 @@ a:hover {
   background: #fff;
 }
 
+/* Login-Fenster */
 #auth {
   position: absolute;
   top: 20px;
@@ -206,4 +200,81 @@ a:hover {
 #auth button {
   width: 100%;
   margin-top: 10px;
+}
+
+/* --- Responsive Anpassungen --- */
+
+/* Tablets */
+@media (max-width: 1024px) {
+  #auth {
+    width: 200px;
+    right: 10px;
+    top: 10px;
+    padding: 12px;
+  }
+
+  .rating-badge {
+    top: 5px;
+    right: 5px;
+    font-size: 0.8em;
+  }
+
+  #accommodations img:hover {
+    transform: scale(1.2); /* Weniger starker Zoom auf Tablets */
+  }
+}
+
+/* Smartphones */
+@media (max-width: 600px) {
+  header.hero {
+    height: 200px;
+  }
+
+  .hero-image {
+    height: 200px;
+  }
+
+  #auth {
+    position: static;
+    width: 90%;
+    margin: 10px auto;
+    box-shadow: none;
+  }
+
+  #form-section {
+    width: 95%;
+    margin: 20px auto;
+    padding: 10px;
+  }
+
+  #accommodations {
+    width: 95%;
+  }
+
+  #accommodations > div {
+    padding-bottom: 20px;
+  }
+
+  .accommodation-card img {
+    width: 80px;
+  }
+
+  .rating .star {
+    font-size: 22px;
+  }
+
+  .rating-badge {
+    font-size: 0.7em;
+    top: 5px;
+    right: 5px;
+  }
+
+  #accommodations img:hover {
+    transform: none; /* Kein Hover-Zoom auf Handys */
+  }
+
+  .lightbox img {
+    max-width: 95%;
+    max-height: 70%;
+  }
 }
