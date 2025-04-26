@@ -1,4 +1,4 @@
-/* StayWars – Modernes und mobiles CSS */
+/* StayWars – sauberes modernes Design */
 
 /* Grundlayout */
 body {
@@ -22,7 +22,7 @@ header.hero {
   object-fit: cover;
 }
 
-/* Allgemeine Sektionen */
+/* Sektionen */
 section {
   margin: 30px auto;
   max-width: 800px;
@@ -39,7 +39,7 @@ h2 {
   color: #222;
 }
 
-/* Formular-Elemente */
+/* Formular */
 input[type="text"],
 input[type="number"],
 input[type="password"],
@@ -121,13 +121,8 @@ a:hover {
   user-select: none;
 }
 
-/* Hover über Sterne */
-.rating .star:hover,
-.rating .star:hover ~ .star {
-  color: gold;
-}
-
-/* Ausgewählte Sterne */
+/* Sterne Hover Vorschau */
+.rating .star.hover,
 .rating .star.selected {
   color: gold;
 }
@@ -156,7 +151,7 @@ a:hover {
   text-align: center;
 }
 
-/* Lightbox Galerie */
+/* Galerie Lightbox */
 .lightbox img {
   max-width: 90%;
   max-height: 80%;
@@ -178,7 +173,7 @@ a:hover {
   background: #fff;
 }
 
-/* Login-Fenster */
+/* Login */
 #auth {
   position: absolute;
   top: 20px;
@@ -206,8 +201,6 @@ a:hover {
   margin-top: 10px;
 }
 
-/* --- Responsive Anpassungen --- */
-
 /* Tablets */
 @media (max-width: 1024px) {
   #auth {
@@ -221,10 +214,6 @@ a:hover {
     top: 5px;
     right: 5px;
     font-size: 0.8em;
-  }
-
-  #accommodations img:hover {
-    transform: scale(1.2);
   }
 }
 
