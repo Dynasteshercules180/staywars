@@ -1,10 +1,10 @@
-// StayWars - Saubere Version
-// Login, Unterkunft erstellen, Galerie + Swipe, saubere Bewertung
+// StayWars - Neue Version
+// Login, Unterkunft erstellen, Galerie, Sternebewertung mit Swipen und direkter Abfrage
 
 window.addEventListener("DOMContentLoaded", () => {
   const supabase = window.supabase.createClient(
-  "https://bzoavgxcbnwphooqqvdm.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ6b2F2Z3hjYm53cGhvb3FxdmRtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU1Njg2NTIsImV4cCI6MjA2MTE0NDY1Mn0.1u53rNL4AVmVsrehvwtVBOe-JzH5_YXTeOLlFTTWIDE"
+    "https://bzoavgxcbnwphooqqvdm.supabase.co",
+    "DEIN_PUBLIC_ANON_KEY"
   );
 
   const VALID_USERS = {
@@ -13,6 +13,7 @@ window.addEventListener("DOMContentLoaded", () => {
   };
 
   let imagesByAccommodation = {};
+  let touchStars = []; // Für Swipe-Tracking
 
   window.login = function () {
     const user = document.getElementById("login-username").value;
@@ -154,12 +155,11 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  async function submitRating(accommodation_id, rating, clickedStars) {
+  async function submitRating(accommodation_id, rating) {
     const username = prompt("Bitte gib deinen Namen ein:");
     if (!username || username.trim() === "") {
       alert("Name ist erforderlich, um zu bewerten.");
-      // Sterne zurücksetzen
-      clickedStars.forEach(star => star.classList.remove('selected'));
+      loadAccommodations(); // zurücksetzen
       return;
     }
 
@@ -172,8 +172,6 @@ window.addEventListener("DOMContentLoaded", () => {
     if (error) {
       alert("Fehler bei Bewertung!");
       console.error(error);
-      // Sterne zurücksetzen
-      clickedStars.forEach(star => star.classList.remove('selected'));
     } else {
       alert("Danke für deine Bewertung!");
       loadAccommodations();
@@ -192,9 +190,9 @@ window.addEventListener("DOMContentLoaded", () => {
     }, 3000);
   }
 
-  // Sterne Hover
+  // ⭐ Hover-Effekt (nur Desktop sinnvoll)
   document.addEventListener('mouseover', function(e) {
-    if (e.target.classList.contains('star')) {
+    if (e.target.classList.contains('star') && window.innerWidth > 768) {
       const stars = Array.from(e.target.parentElement.querySelectorAll('.star'));
       const hoverIndex = stars.indexOf(e.target);
       stars.forEach((star, idx) => {
@@ -208,7 +206,7 @@ window.addEventListener("DOMContentLoaded", () => {
   });
 
   document.addEventListener('mouseout', function(e) {
-    if (e.target.classList.contains('star')) {
+    if (e.target.classList.contains('star') && window.innerWidth > 768) {
       const stars = Array.from(e.target.parentElement.querySelectorAll('.star'));
       stars.forEach(star => {
         star.classList.remove('hover');
@@ -216,9 +214,9 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Sterne Klick
+  // ⭐ Klick auf Desktop
   document.addEventListener('click', function(e) {
-    if (e.target.classList.contains('star')) {
+    if (e.target.classList.contains('star') && window.innerWidth > 768) {
       const stars = Array.from(e.target.parentElement.querySelectorAll('.star'));
       stars.forEach(star => star.classList.remove('selected'));
 
@@ -230,8 +228,45 @@ window.addEventListener("DOMContentLoaded", () => {
       });
 
       const accommodationId = e.target.parentElement.dataset.id;
-      const rating = e.target.dataset.value;
-      submitRating(accommodationId, rating, stars);
+      const rating = parseInt(e.target.dataset.value);
+      submitRating(accommodationId, rating);
+    }
+  });
+
+  // 📱 Touch Swipe über Sterne auf Mobile
+  document.addEventListener('touchstart', function(e) {
+    if (e.target.classList.contains('star')) {
+      touchStars = Array.from(e.target.parentElement.querySelectorAll('.star'));
+    }
+  });
+
+  document.addEventListener('touchmove', function(e) {
+    if (touchStars.length > 0) {
+      const touch = e.touches[0];
+      const element = document.elementFromPoint(touch.clientX, touch.clientY);
+      if (element && element.classList.contains('star')) {
+        const idx = touchStars.indexOf(element);
+        if (idx >= 0) {
+          touchStars.forEach((star, i) => {
+            if (i <= idx) {
+              star.classList.add('hover');
+            } else {
+              star.classList.remove('hover');
+            }
+          });
+        }
+      }
+    }
+  });
+
+  document.addEventListener('touchend', function(e) {
+    if (touchStars.length > 0) {
+      const selectedStars = touchStars.filter(star => star.classList.contains('hover'));
+      if (selectedStars.length > 0) {
+        const accommodationId = selectedStars[0].parentElement.dataset.id;
+        submitRating(accommodationId, selectedStars.length);
+      }
+      touchStars = [];
     }
   });
 
