@@ -197,7 +197,7 @@ window.addEventListener("DOMContentLoaded", () => {
       const clickedIndex = stars.indexOf(e.target);
 
       stars.forEach((star, idx) => {
-        if (idx <= clickedIndex) {
+        if (idx >= clickedIndex) {
           star.classList.add('selected');
         } else {
           star.classList.remove('selected');
