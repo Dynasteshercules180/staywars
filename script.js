@@ -1,4 +1,3 @@
-// StayWars - Korrigierte Version
 window.addEventListener("DOMContentLoaded", () => {
   const supabase = window.supabase.createClient(
     "https://bzoavgxcbnwphooqqvdm.supabase.co",
@@ -11,10 +10,6 @@ window.addEventListener("DOMContentLoaded", () => {
   };
 
   let imagesByAccommodation = {};
-  let touchStars = [];
-  let currentGalleryImages = [];
-  let currentIndex = 0;
-  let touchStartX = 0;
 
   window.login = function () {
     const user = document.getElementById("login-username").value;
@@ -129,7 +124,6 @@ window.addEventListener("DOMContentLoaded", () => {
         const avg = reviews.length > 0 ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length) : 0;
         return { ...acc, avgRating: avg };
       }));
-
       data = ratings.sort((a, b) => b.avgRating - a.avgRating);
     }
 
@@ -222,63 +216,41 @@ window.addEventListener("DOMContentLoaded", () => {
     }, 3000);
   }
 
-  // ⭐ Galerie öffnen (Delegation)
+  // ⭐ Event-Delegation: Galerie öffnen
   document.addEventListener('click', function(e) {
     if (e.target.matches('#accommodations img')) {
-      const accId = e.target.dataset.accid;
-      const index = parseInt(e.target.dataset.index);
-      openGallery(accId, index);
+      openGallery(e.target.dataset.accid, parseInt(e.target.dataset.index));
     }
   });
 
-  // ⭐ Bewertung (Delegation)
+  // ⭐ Event-Delegation: Sternebewertung
   document.addEventListener('click', function(e) {
-    if (e.target.classList.contains('star') && window.innerWidth > 768) {
+    if (e.target.classList.contains('star')) {
       const stars = Array.from(e.target.parentElement.querySelectorAll('.star'));
       stars.forEach(star => star.classList.remove('selected'));
       const clickedIndex = stars.indexOf(e.target);
       stars.forEach((star, idx) => {
         if (idx <= clickedIndex) star.classList.add('selected');
       });
-      const accommodationId = e.target.parentElement.dataset.id;
-      const rating = parseInt(e.target.dataset.value);
-      submitRating(accommodationId, rating);
+      submitRating(e.target.parentElement.dataset.id, parseInt(e.target.dataset.value));
     }
   });
 
-  // 📷 Galerie Funktion
   function openGallery(accId, startIndex) {
     const images = imagesByAccommodation[accId];
-    if (!images || images.length === 0) return;
+    if (!images) return;
 
-    currentGalleryImages = images;
-    currentIndex = startIndex;
+    let currentIndex = startIndex;
 
     const lightbox = document.createElement('div');
-    lightbox.style.position = 'fixed';
-    lightbox.style.top = 0;
-    lightbox.style.left = 0;
-    lightbox.style.width = '100%';
-    lightbox.style.height = '100%';
-    lightbox.style.background = 'rgba(0,0,0,0.8)';
-    lightbox.style.display = 'flex';
-    lightbox.style.flexDirection = 'column';
-    lightbox.style.alignItems = 'center';
-    lightbox.style.justifyContent = 'center';
-    lightbox.style.zIndex = 9999;
-
+    lightbox.style = "position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;";
+    
     const img = document.createElement('img');
     img.src = images[currentIndex];
-    img.style.maxWidth = '90%';
-    img.style.maxHeight = '80%';
-    img.style.borderRadius = '10px';
-    img.style.boxShadow = '0 0 20px white';
-    img.style.marginBottom = '20px';
+    img.style = "max-width:90%;max-height:80%;border-radius:10px;box-shadow:0 0 20px white;margin-bottom:20px;";
 
     const controls = document.createElement('div');
-    controls.style.display = window.innerWidth > 768 ? 'flex' : 'none';
-    controls.style.gap = '20px';
-
+    controls.style = "display:flex;gap:20px;";
     const prev = document.createElement('button');
     prev.textContent = "⟵";
     const next = document.createElement('button');
@@ -300,7 +272,6 @@ window.addEventListener("DOMContentLoaded", () => {
     controls.appendChild(next);
     lightbox.appendChild(img);
     lightbox.appendChild(controls);
-
     document.body.appendChild(lightbox);
 
     lightbox.onclick = () => lightbox.remove();
