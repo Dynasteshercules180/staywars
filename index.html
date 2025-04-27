@@ -49,6 +49,20 @@
   <!-- Unterkunftsliste -->
   <section id="accommodation-list">
     <h2>Alle Unterkünfte</h2>
+
+    <!-- 🎯 NEU: Sortier-Auswahl -->
+    <div style="text-align:center; margin-bottom:20px;">
+      <label for="sort-options">Sortieren nach:</label>
+      <select id="sort-options" onchange="loadAccommodations()">
+        <option value="created_at_desc">Neueste zuerst</option>
+        <option value="rating_desc">Beste Bewertung</option>
+        <option value="price_asc">Niedrigster Preis</option>
+        <option value="rooms_desc">Meiste Zimmer</option>
+        <option value="bathrooms_desc">Meiste Badezimmer</option>
+        <option value="location_asc">Ort A–Z</option>
+      </select>
+    </div>
+
     <div id="accommodations"></div>
   </section>
 
