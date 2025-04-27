@@ -308,67 +308,95 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  function openGallery(accId, startIndex) {
-    const images = imagesByAccommodation[accId];
-    if (!images) return;
+function openGallery(accId, startIndex) {
+  const images = imagesByAccommodation[accId];
+  if (!images) return;
 
-    currentGalleryImages = images;
-    currentIndex = startIndex;
+  currentGalleryImages = images;
+  currentIndex = startIndex;
+  let touchStartX = 0;
 
-    const lightbox = document.createElement('div');
-    lightbox.style = `
-      position:fixed;
-      top:0;left:0;width:100%;height:100%;
-      background:rgba(0,0,0,0.8);
-      display:flex;flex-direction:column;
-      align-items:center;justify-content:center;
-      z-index:9999;
-    `;
+  const lightbox = document.createElement('div');
+  lightbox.style = `
+    position:fixed;
+    top:0;left:0;width:100%;height:100%;
+    background:rgba(0,0,0,0.8);
+    display:flex;flex-direction:column;
+    align-items:center;justify-content:center;
+    z-index:9999;
+  `;
 
-    const img = document.createElement('img');
+  const img = document.createElement('img');
+  img.src = images[currentIndex];
+  img.style = "max-width:90%;max-height:80%;border-radius:10px;box-shadow:0 0 20px white;margin-bottom:20px;";
+
+  const controls = document.createElement('div');
+  controls.style = "display:flex;gap:20px;margin-top:10px;";
+  
+  const prev = document.createElement('button');
+  prev.textContent = "⟵";
+  prev.style = "font-size:2rem;padding:10px 20px;border-radius:10px;cursor:pointer;";
+  
+  const next = document.createElement('button');
+  next.textContent = "⟶";
+  next.style = "font-size:2rem;padding:10px 20px;border-radius:10px;cursor:pointer;";
+
+  prev.onclick = (e) => {
+    e.stopPropagation();
+    currentIndex = (currentIndex - 1 + images.length) % images.length;
     img.src = images[currentIndex];
-    img.style = "max-width:90%;max-height:80%;border-radius:10px;box-shadow:0 0 20px white;margin-bottom:20px;";
+  };
 
-    const controls = document.createElement('div');
-    controls.style = "display:flex;gap:20px;";
-    const prev = document.createElement('button');
-    prev.textContent = "⟵";
-    const next = document.createElement('button');
-    next.textContent = "⟶";
+  next.onclick = (e) => {
+    e.stopPropagation();
+    currentIndex = (currentIndex + 1) % images.length;
+    img.src = images[currentIndex];
+  };
 
-    prev.onclick = (e) => {
-      e.stopPropagation();
-      currentIndex = (currentIndex - 1 + images.length) % images.length;
-      img.src = images[currentIndex];
-    };
+  controls.appendChild(prev);
+  controls.appendChild(next);
+  lightbox.appendChild(img);
+  lightbox.appendChild(controls);
+  document.body.appendChild(lightbox);
 
-    next.onclick = (e) => {
-      e.stopPropagation();
+  lightbox.onclick = () => {
+    document.removeEventListener('keydown', keyHandler);
+    lightbox.remove();
+  };
+
+  lightbox.addEventListener('touchstart', (e) => {
+    touchStartX = e.touches[0].clientX;
+  });
+
+  lightbox.addEventListener('touchend', (e) => {
+    const touchEndX = e.changedTouches[0].clientX;
+    if (touchEndX < touchStartX - 50) {
       currentIndex = (currentIndex + 1) % images.length;
       img.src = images[currentIndex];
-    };
+    }
+    if (touchEndX > touchStartX + 50) {
+      currentIndex = (currentIndex - 1 + images.length) % images.length;
+      img.src = images[currentIndex];
+    }
+  });
 
-    lightbox.appendChild(img);
-    lightbox.appendChild(controls);
-    document.body.appendChild(lightbox);
+  function keyHandler(e) {
+    if (e.key === "ArrowLeft") {
+      currentIndex = (currentIndex - 1 + images.length) % images.length;
+      img.src = images[currentIndex];
+    }
+    if (e.key === "ArrowRight") {
+      currentIndex = (currentIndex + 1) % images.length;
+      img.src = images[currentIndex];
+    }
+  }
 
-    lightbox.onclick = () => lightbox.remove();
+  // 📢 WICHTIG: Key-Events aktivieren NUR auf Desktop (breiter Bildschirm)
+  if (window.innerWidth > 768) {
+    document.addEventListener('keydown', keyHandler);
+  }
+}
 
-    lightbox.addEventListener('touchstart', (e) => {
-      touchStartX = e.touches[0].clientX;
-    });
-
-    lightbox.addEventListener('touchend', (e) => {
-      const touchEndX = e.changedTouches[0].clientX;
-      if (touchEndX < touchStartX - 50) {
-        currentIndex = (currentIndex + 1) % images.length;
-        img.src = images[currentIndex];
-      }
-      if (touchEndX > touchStartX + 50) {
-        currentIndex = (currentIndex - 1 + images.length) % images.length;
-        img.src = images[currentIndex];
-      }
-    });
   }
 
   loadAccommodations();
