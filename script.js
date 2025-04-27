@@ -1,8 +1,8 @@
-// StayWars - Komplett überarbeitet mit Sortieren & Mobile-Sterne-Swipe
+// StayWars - Komplett aktualisiert mit Sortierung und Swipe/Klick Bewertung
 
 window.addEventListener("DOMContentLoaded", () => {
   const supabase = window.supabase.createClient(
-       "https://bzoavgxcbnwphooqqvdm.supabase.co",
+   "https://bzoavgxcbnwphooqqvdm.supabase.co",
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ6b2F2Z3hjYm53cGhvb3FxdmRtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU1Njg2NTIsImV4cCI6MjA2MTE0NDY1Mn0.1u53rNL4AVmVsrehvwtVBOe-JzH5_YXTeOLlFTTWIDE"
   );
 
@@ -220,7 +220,7 @@ window.addEventListener("DOMContentLoaded", () => {
     }, 3000);
   }
 
-  // EventListener: Sortiermenü
+  // ⭐ EventListener: Dropdown-Sortieren
   const sortOptions = document.getElementById("sort-options");
   if (sortOptions) {
     sortOptions.addEventListener("change", () => {
@@ -228,7 +228,7 @@ window.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // ⭐ Sterne Hover (Desktop)
+  // Sterne Hover (nur Desktop)
   document.addEventListener('mouseover', function(e) {
     if (e.target.classList.contains('star') && window.innerWidth > 768) {
       const stars = Array.from(e.target.parentElement.querySelectorAll('.star'));
@@ -252,7 +252,7 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // ⭐ Bewertung Klick (Desktop) / Swipe (Mobile) kommt noch hinterher wie gehabt
+  // Galerie & Swipe-Funktion (dein bisheriger Code bleibt!)
 
   loadAccommodations();
 });
