@@ -82,21 +82,26 @@ window.addEventListener("DOMContentLoaded", () => {
   });
 
   window.loadAccommodations = async function () {
-    const sortOption = document.getElementById("sort-options")?.value || "created_at_desc";
-    let query = supabase.from("accommodations").select("*");
+  const thisSession = ++currentLoadSession;
 
-    if (sortOption === "price_asc") query = query.order("price", { ascending: true });
-    else if (sortOption === "rooms_desc") query = query.order("rooms", { ascending: false });
-    else if (sortOption === "bathrooms_desc") query = query.order("bathrooms", { ascending: false });
-    else if (sortOption === "location_asc") query = query.order("location", { ascending: true });
-    else query = query.order("created_at", { ascending: false });
+  const sortOption = document.getElementById("sort-options")?.value || "created_at_desc";
+  let query = supabase.from("accommodations").select("*");
 
-    let { data, error } = await query;
-    if (error) {
-      console.error("Fehler beim Laden:", error);
-      return;
-    }
+  if (sortOption === "price_asc") query = query.order("price", { ascending: true });
+  else if (sortOption === "rooms_desc") query = query.order("rooms", { ascending: false });
+  else if (sortOption === "bathrooms_desc") query = query.order("bathrooms", { ascending: false });
+  else if (sortOption === "location_asc") query = query.order("location", { ascending: true });
+  else query = query.order("created_at", { ascending: false });
 
+  let { data, error } = await query;
+
+  // 👉 Hier wird geprüft:
+  if (thisSession !== currentLoadSession) return;
+
+  if (error) {
+    console.error("Fehler beim Laden:", error);
+    return;
+  }
     if (sortOption === "rating_desc") {
       const ratings = await Promise.all(data.map(async (acc) => {
         const { data: reviews } = await supabase.from("reviews").select("rating").eq("accommodation_id", acc.id);
