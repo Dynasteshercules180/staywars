@@ -93,7 +93,7 @@ window.addEventListener("DOMContentLoaded", () => {
     loadAccommodations();
   });
 
-  async function loadAccommodations() {
+  window.loadAccommodations = async function () {
     const sortOption = document.getElementById("sort-options")?.value || "created_at_desc";
     const container = document.getElementById("accommodations");
     container.innerHTML = "<p style='text-align:center;'>Wird geladen...</p>";
