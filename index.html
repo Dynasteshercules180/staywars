@@ -2,6 +2,7 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>StayWars – Möge die Nacht S-tier sein!</title>
   <link rel="stylesheet" href="style.css" />
   <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
@@ -50,9 +51,9 @@
   <section id="accommodation-list">
     <h2>Alle Unterkünfte</h2>
 
-    <!-- 🎯 NEU: Sortier-Auswahl -->
+    <!-- 🎯 Sortier-Auswahl -->
     <div style="text-align:center; margin-bottom:20px;">
-      <label for="sort-options">Sortieren nach:</label>
+      <label for="sort-options"><strong>Sortieren nach:</strong></label>
       <select id="sort-options" onchange="loadAccommodations()">
         <option value="created_at_desc">Neueste zuerst</option>
         <option value="rating_desc">Beste Bewertung</option>
