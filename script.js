@@ -13,6 +13,7 @@ window.addEventListener("DOMContentLoaded", () => {
   let currentGalleryImages = [];
   let currentIndex = 0;
   let touchStartX = 0;
+  let currentLoadSession = 0;
 
   window.login = function () {
     const user = document.getElementById("login-username").value;
@@ -94,6 +95,7 @@ window.addEventListener("DOMContentLoaded", () => {
   else query = query.order("created_at", { ascending: false });
 
   let { data, error } = await query;
+  if (thisSession !== currentLoadSession) return;
 
   // 👉 Hier wird geprüft:
   if (thisSession !== currentLoadSession) return;
