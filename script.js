@@ -236,46 +236,73 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  function openGallery(accId, startIndex) {
-    const images = imagesByAccommodation[accId];
-    if (!images) return;
+function openGallery(accId, startIndex) {
+  const images = imagesByAccommodation[accId];
+  if (!images || images.length === 0) return;
 
-    let currentIndex = startIndex;
+  let currentIndex = startIndex;
+  let touchStartX = 0;
 
-    const lightbox = document.createElement('div');
-    lightbox.style = "position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;";
-    
-    const img = document.createElement('img');
+  const lightbox = document.createElement('div');
+  lightbox.style = `
+    position:fixed;
+    top:0;left:0;width:100%;height:100%;
+    background:rgba(0,0,0,0.8);
+    display:flex;flex-direction:column;
+    align-items:center;justify-content:center;
+    z-index:9999;
+  `;
+
+  const img = document.createElement('img');
+  img.src = images[currentIndex];
+  img.style = "max-width:90%;max-height:80%;border-radius:10px;box-shadow:0 0 20px white;margin-bottom:20px;";
+
+  const controls = document.createElement('div');
+  controls.style = "display:flex;gap:20px;";
+
+  const prev = document.createElement('button');
+  prev.textContent = "⟵";
+  const next = document.createElement('button');
+  next.textContent = "⟶";
+
+  prev.onclick = (e) => {
+    e.stopPropagation();
+    currentIndex = (currentIndex - 1 + images.length) % images.length;
     img.src = images[currentIndex];
-    img.style = "max-width:90%;max-height:80%;border-radius:10px;box-shadow:0 0 20px white;margin-bottom:20px;";
+  };
 
-    const controls = document.createElement('div');
-    controls.style = "display:flex;gap:20px;";
-    const prev = document.createElement('button');
-    prev.textContent = "⟵";
-    const next = document.createElement('button');
-    next.textContent = "⟶";
+  next.onclick = (e) => {
+    e.stopPropagation();
+    currentIndex = (currentIndex + 1) % images.length;
+    img.src = images[currentIndex];
+  };
 
-    prev.onclick = (e) => {
-      e.stopPropagation();
-      currentIndex = (currentIndex - 1 + images.length) % images.length;
-      img.src = images[currentIndex];
-    };
+  // 📱 Touch Wischen
+  lightbox.addEventListener('touchstart', (e) => {
+    touchStartX = e.touches[0].clientX;
+  });
 
-    next.onclick = (e) => {
-      e.stopPropagation();
+  lightbox.addEventListener('touchend', (e) => {
+    const touchEndX = e.changedTouches[0].clientX;
+    if (touchEndX < touchStartX - 50) { // Wisch nach links
       currentIndex = (currentIndex + 1) % images.length;
       img.src = images[currentIndex];
-    };
+    }
+    if (touchEndX > touchStartX + 50) { // Wisch nach rechts
+      currentIndex = (currentIndex - 1 + images.length) % images.length;
+      img.src = images[currentIndex];
+    }
+  });
 
-    controls.appendChild(prev);
-    controls.appendChild(next);
-    lightbox.appendChild(img);
-    lightbox.appendChild(controls);
-    document.body.appendChild(lightbox);
+  controls.appendChild(prev);
+  controls.appendChild(next);
+  lightbox.appendChild(img);
+  lightbox.appendChild(controls);
 
-    lightbox.onclick = () => lightbox.remove();
-  }
+  document.body.appendChild(lightbox);
+
+  lightbox.onclick = () => lightbox.remove();
+}
 
   loadAccommodations();
 });
