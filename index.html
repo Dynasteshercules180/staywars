@@ -10,12 +10,10 @@
 </head>
 <body>
 
-  <!-- Hero Header mit großem Logo -->
   <header class="hero">
     <img src="staywars-logo.png" alt="StayWars Logo" class="hero-image" />
   </header>
 
-  <!-- Login-Bereich -->
   <section id="auth">
     <h2>Login</h2>
     <input type="text" id="login-username" placeholder="Benutzername" />
@@ -24,12 +22,10 @@
     <p id="login-status" style="color:red;"></p>
   </section>
 
-  <!-- Unterkunftsformular -->
   <section id="form-section" style="display:none;">
     <h2>Unterkunft eintragen / bearbeiten</h2>
     <form id="accommodation-form" enctype="multipart/form-data">
       <input type="hidden" id="accommodation-id" />
-
       <input type="text" id="title" placeholder="Titel" required /><br />
       <textarea id="description" placeholder="Beschreibung"></textarea><br />
       <input type="text" id="location" placeholder="Ort" /><br />
@@ -39,19 +35,21 @@
       <input type="number" id="rooms" placeholder="Zimmeranzahl" /><br />
       <input type="number" id="bathrooms" placeholder="Badezimmeranzahl" /><br />
       <input type="text" id="link" placeholder="Link zur Unterkunft" /><br /><br />
-
       <label>Bilder hochladen (max. 4):</label><br />
       <input type="file" id="images" accept="image/*" multiple /><br /><br />
-
       <button type="submit">Speichern</button>
     </form>
   </section>
 
-  <!-- Unterkunftsliste -->
   <section id="accommodation-list">
     <h2>Alle Unterkünfte</h2>
 
-    <!-- 🎯 Sortier-Auswahl -->
+    <!-- Filter nach Ort -->
+    <div style="text-align:center; margin-bottom:10px;">
+      <input type="text" id="filter-location" placeholder="Ort suchen..." oninput="loadAccommodations()" />
+    </div>
+
+    <!-- Sortierauswahl -->
     <div style="text-align:center; margin-bottom:20px;">
       <label for="sort-options"><strong>Sortieren nach:</strong></label>
       <select id="sort-options" onchange="loadAccommodations()">
@@ -66,6 +64,5 @@
 
     <div id="accommodations"></div>
   </section>
-
 </body>
 </html>
